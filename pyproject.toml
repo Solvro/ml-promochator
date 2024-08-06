@@ -8,8 +8,8 @@ version = "0.0.1"
 description = "Codebase for promochator"
 requires-python = ">= 3.8, < 3.12"
 dependencies = [
-    "jupyter",
-    "scholarly"
+    "jupyter~=1.0.0",
+    "scholarly~=1.7.11"
 ]
 [project.urls]
 "Source" = "https://github.com/Solvro/ml-promochator"
