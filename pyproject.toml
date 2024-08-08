@@ -10,7 +10,7 @@ requires-python = ">= 3.8, < 3.12"
 dependencies = [
     "jupyter~=1.0.0",
     "scholarly~=1.7.11",
-    "langchain~=0.2.29",
+    "langchain~=0.2.11",
     "fire~=0.6.0"
 ]
 [project.urls]
