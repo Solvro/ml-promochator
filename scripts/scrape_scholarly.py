@@ -1,7 +1,4 @@
-import sys
-
-sys.path.append('.')
-from src.utils import scrape_to_csv
+from utils import scrape_to_csv
 
 import fire
 

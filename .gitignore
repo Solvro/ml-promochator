@@ -22,3 +22,5 @@ venv/
 Thumbs.db
 
 # Ignore other project-specific files
+build/
+src/ml_promochator.egg-info/
