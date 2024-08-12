@@ -32,13 +32,13 @@
 
 ## Scrpits
 
-### scrape_scholarly.py
+1. scrape_scholarly.py
 
     ```
     python scripts/scrape_scholarly.py
     ```
 
-###
+2. recomend.py
 
     ```
     python scripts/recomend.py --question="your question"
