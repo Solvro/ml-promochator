@@ -29,6 +29,10 @@
    ```
    pre-commit install
    ```
+6. create .env file and paste your Open Ai Api Key
+   ```
+   OPEN_AI_API_KEY = "your api key"
+   ```
 
 ## Scrpits
 
@@ -41,5 +45,5 @@
 2. recomend.py
 
     ```
-    python scripts/recomend.py --question="your question"
+    python scripts/recomend.py --question="your's question"
     ```
