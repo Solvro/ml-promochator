@@ -7,7 +7,7 @@ from langchain_openai import OpenAI
 import fire
 
 
-loader = CSVLoader(file_path='../data/papers_data.csv')
+loader = CSVLoader(file_path='./data/papers_data.csv')
 data = loader.load()
 
 

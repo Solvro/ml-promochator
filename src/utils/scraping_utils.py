@@ -7,6 +7,7 @@ import unidecode
 import string
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
+from nltk.stem import PorterStemmer
 
 
 pg = ProxyGenerator()
@@ -66,7 +67,19 @@ def _scrape_author_data(author_name: str) -> tuple[str, str, dict[str, str]]:
 def _text_compression_pipeline(text: str) -> str:
     stop_words = set(stopwords.words('english'))
     text = unidecode.unidecode(text.lower())
+    words = set(word_tokenize(text))
+    processed_text = [word for word in words if word.lower() not in stop_words and word not in string.punctuation]
+
+    return ' '.join(processed_text)
+
+
+def _text_compression_pipeline_w_stemming(text: str) -> str:
+    stop_words = set(stopwords.words('english'))
+    stemmer = PorterStemmer()
+
+    text = unidecode.unidecode(text.lower())
     words = word_tokenize(text)
+    words = set([stemmer.stem(word) for word in words])
     processed_text = [word for word in words if word.lower() not in stop_words and word not in string.punctuation]
 
     return ' '.join(processed_text)
