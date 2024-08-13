@@ -10,7 +10,7 @@ requires-python = ">= 3.8, < 3.12"
 dependencies = [
     "jupyter~=1.0.0",
     "scholarly~=1.7.11",
-    "langchain~=0.2.11",
+    "langchain~=0.2.10",
     "fire~=0.6.0",
     "nltk~=3.8.1",
     "unidecode~=1.3.8"
@@ -69,6 +69,10 @@ order-by-type = true
 lines-between-types = 1
 combine-as-imports = true
 # known_first_party = "common"
+
+ignore = [
+    "I001",  
+]
 
 [tool.setuptools.dynamic]
 readme = {file = ['README.md']}

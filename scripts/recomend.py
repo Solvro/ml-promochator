@@ -2,18 +2,29 @@ from langchain_community.document_loaders.csv_loader import CSVLoader
 from langchain_openai import OpenAIEmbeddings
 from langchain_text_splitters import CharacterTextSplitter
 from langchain_community.vectorstores import FAISS
+import faiss
 from langchain.chains import RetrievalQA
 from langchain_openai import OpenAI
 import fire
+import os
+import pickle
 
 
-loader = CSVLoader(file_path='./data/papers_data.csv')
-data = loader.load()
+vectorstore_path = "./vectorstores/test_vectorstore"
+embeddings = OpenAIEmbeddings()
 
+if os.path.exists(vectorstore_path):
+    db = FAISS.load_local(vectorstore_path, embeddings, allow_dangerous_deserialization=True)
+else:
+    loader = CSVLoader(file_path="./data/test_staff_data.csv", encoding="utf-8")
+    data = loader.load()
 
-text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=0)
-documents = text_splitter.split_documents(data)
-db = FAISS.from_documents(documents, OpenAIEmbeddings())
+    text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=0)
+    documents = text_splitter.split_documents(data)
+
+    db = FAISS.from_documents(documents, embeddings)
+    db.save_local(vectorstore_path)
+
 
 retriever = db.as_retriever(search_kwargs={'k': 5})
 
@@ -26,7 +37,7 @@ qa_chain = RetrievalQA.from_chain_type(
 
 PROMPT_TEMPLATE = """
 You are an expert in providing information about thesis supervisors at Politechnika Wrocławska.
-When given a user question about the most suitable thesis supervisor for their project based on their reasearch papers and intrests, provide the supervisor's name along with titles of their research papers.
+When given a user question about the most suitable thesis supervisors for their project based on their reasearch papers and intrests, provide 3 supervisor's and their' faculty along with titles of some of their research papers.
 
 User Question:
 {question}

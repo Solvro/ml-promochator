@@ -2,6 +2,7 @@ from scholarly import scholarly
 from scholarly import ProxyGenerator
 import csv
 import json
+import os
 import nltk
 import unidecode
 import string
@@ -13,27 +14,55 @@ from nltk.stem import PorterStemmer
 pg = ProxyGenerator()
 
 
-def scrape_to_csv(authors_file_path: str, csv_path: str) -> None:
+FACULTIES = {
+    'W1_': 'Faculty of Architecture',
+    'W2_': 'Faculty of Civil Engineering',
+    'W3_': 'Faculty of Chemistry',
+    'W4N': 'Faculty of Information and Communication Technology',
+    'W5_': 'Faculty of Electrical Engineering',
+    'W6_': 'Faculty of Geoengineering, Mining and Geology',
+    'W7_': 'Faculty of Environmental Engineering',
+    'W8N': 'Faculty of Management',
+    'W9_': 'Faculty of Mechanical and Power Engineering',
+    'W10': 'Faculty of Mechanical Engineering',
+    'W11': 'Faculty of Fundamental Problems of Technology',
+    'W12': 'Faculty of Electronics, Photonics and Microsystems',
+    'W13': 'Faculty of Pure and Applied Mathematics',
+    'W14': 'Faculty of Medicine',
+}
+
+
+def scrape_to_csv(staff_data_path: str, csv_path: str) -> None:
     _setup_nltk_resources()
-    authors = []
-    with open(authors_file_path, 'r', encoding='utf-8') as file:
-        for line in file:
-            name = line.strip()
-            authors.append(str(name))
 
     csv_file = csv_path
-    with open(csv_file, mode='w', newline='', encoding='utf-8') as file:
+    file_exists = os.path.isfile(csv_file)
+
+    with open(csv_file, mode='a', newline='', encoding='utf-8') as file:
         writer = csv.writer(file)
-        writer.writerow(["Supervisor's name", 'interests', 'research papers'])
-        for author in authors:
-            name, interests, research_papers = _scrape_author_data(author)
-            writer.writerow(
-                [
-                    name,
-                    ' '.join(interests),
-                    json.dumps(research_papers),
-                ]
-            )
+        if not file_exists:
+            writer.writerow(["Supervisor's name", 'faculty', 'interests', 'research papers'])
+
+        for json_file_name in os.listdir(staff_data_path):
+            faculty = FACULTIES[json_file_name[:3]]
+            json_file_path = os.path.join(staff_data_path, json_file_name)
+            with open(json_file_path, 'r', encoding='utf-8') as json_file:
+                data = json.load(json_file)
+
+                for author_data in data:
+                    name = f"{author_data['first_name']} {author_data['last_name']}"
+                    titles = author_data.get('titles', {}).get('before', '')
+                    if titles != 'mgr inż.' and titles != 'mgr' and titles != 'mgr inż. arch.':
+                        interests, research_papers = _scrape_author_data(name)
+
+                        writer.writerow(
+                            [
+                                f'{titles} {name}',
+                                faculty,
+                                ' '.join(interests),
+                                json.dumps(research_papers),
+                            ]
+                        )
 
 
 def _scrape_author_data(author_name: str) -> tuple[str, str, dict[str, str]]:
@@ -41,10 +70,9 @@ def _scrape_author_data(author_name: str) -> tuple[str, str, dict[str, str]]:
     try:
         first_author_result = next(search_query)
     except StopIteration:
-        return author_name, '', {}
+        return '', {}
 
     author_dict = scholarly.fill(first_author_result)
-    name = author_dict['name']
     interests = author_dict['interests']
 
     papers = author_dict['publications'][:10]
@@ -61,7 +89,7 @@ def _scrape_author_data(author_name: str) -> tuple[str, str, dict[str, str]]:
         if papers_count == 5:
             break
 
-    return name, interests, research_papers
+    return interests, research_papers
 
 
 def _text_compression_pipeline(text: str) -> str:
@@ -79,7 +107,7 @@ def _text_compression_pipeline_w_stemming(text: str) -> str:
 
     text = unidecode.unidecode(text.lower())
     words = word_tokenize(text)
-    words = set([stemmer.stem(word) for word in words])
+    words = [stemmer.stem(word) for word in set(words)]
     processed_text = [word for word in words if word.lower() not in stop_words and word not in string.punctuation]
 
     return ' '.join(processed_text)
