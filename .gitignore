@@ -25,6 +25,8 @@ Thumbs.db
 build/
 src/ml_promochator.egg-info/
 
-data/
+/data/*
+!data/.gitkeep 
 
-vectorstores/
+vectorstores/*
+!vectorstores/.gitkeep

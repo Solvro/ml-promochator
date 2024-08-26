@@ -19,7 +19,7 @@ if os.path.exists(vectorstore_path):
         vectorstore_path, embeddings, allow_dangerous_deserialization=True
     )
 else:
-    loader = CSVLoader(file_path="./data/papers_data.csv", encoding="utf-8")
+    loader = CSVLoader(file_path="./data/authors_with_papers.csv", encoding="utf-8")
     data = loader.load()
 
     text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=0)

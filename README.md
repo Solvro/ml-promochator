@@ -38,12 +38,14 @@
 
 1. scrape_scholarly.py
 
-    ```
-    python scripts/scrape_scholarly.py
-    ```
+   ```
+   python scripts/scrape_scholarly.py
+   ```
+
+Before running recomend.py, please ensure that you have downloaded the authors_with_papers.csv file from the (promochator dataset)[https://drive.google.com/drive/folders/1odcaykO5uGtJXGugjCm8UioFT2XWWHNM]. Place the file in the data folder within your project directory.
 
 2. recomend.py
 
-    ```
-    python scripts/recomend.py --question="your's question"
-    ```
+   ```
+   python scripts/recomend.py --question="your's question"
+   ```
