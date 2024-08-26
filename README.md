@@ -22,7 +22,7 @@
 4. Install packages:
 
    ```
-   python -m pip install -e .[dev]
+   python -m pip install -e .
    ```
 
 5. Enable pre-commit
