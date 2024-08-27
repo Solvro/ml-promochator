@@ -6,10 +6,18 @@ build-backend = "setuptools.build_meta"
 name = "ml-promochator"
 version = "0.0.1"
 description = "Codebase for promochator"
-requires-python = ">= 3.8, < 3.12"
+requires-python = ">=3.8,<3.13"
 dependencies = [
     "jupyter~=1.0.0",
-    "scholarly~=1.7.11"
+    "scholarly~=1.7.11",
+    "langchain~=0.2.10",
+    "langchain-community~=0.2.12",
+    "langchain-openai~=0.1.22",
+    "fire~=0.6.0",
+    "nltk~=3.8.1",
+    "unidecode~=1.3.8",
+    "python-dotenv~=1.0.1",
+    "faiss-cpu~=1.8.0.post1"
 ]
 [project.urls]
 "Source" = "https://github.com/Solvro/ml-promochator"
@@ -31,7 +39,7 @@ test = [
     "pytest-xdist ~= 2.5",
     "pytest-sugar ~= 0.9",
 ]
-dev = ["ptp[jupyter, lint, test]"]
+dev = ["ml-promochator[jupyter, lint, test]"]
 
 [tool.setuptools.packages.find]
 where = ["src"]
@@ -64,6 +72,10 @@ order-by-type = true
 lines-between-types = 1
 combine-as-imports = true
 # known_first_party = "common"
+
+ignore = [
+    "I001",  
+]
 
 [tool.setuptools.dynamic]
 readme = {file = ['README.md']}

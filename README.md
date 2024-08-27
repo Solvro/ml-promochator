@@ -1,3 +1,5 @@
+# PromoCHATor
+
 <p align="center">
     <img src="./assets/solvro.png">
 </p>
@@ -44,7 +46,6 @@ If you want to setup project locally
    Alternatively use any other virtual enviroment manager of your choice.
 
 2. Activate environment
-
    ```
    conda activate your-environment-name
    ```
@@ -75,8 +76,21 @@ If you want to setup project locally
 
 After these steps project scripts are ready to launch
 
+
 ### Launching
-T.B.C
+1. scrape_scholarly.py
+
+   ```
+   python scripts/scrape_scholarly.py
+   ```
+
+Before running recomend.py, please ensure that you have downloaded the authors_with_papers.csv file from the [promochator dataset](https://drive.google.com/drive/folders/1odcaykO5uGtJXGugjCm8UioFT2XWWHNM). Place the file in the data folder within your project directory.
+
+2. recomend.py
+
+   ```
+   python scripts/recomend.py --question="your's question"
+   ```
 
 ### Data managment
 
