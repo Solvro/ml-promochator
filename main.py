@@ -1,19 +1,21 @@
+from fastapi import FastAPI
+from pydantic import BaseModel
+
 from langchain_openai import OpenAIEmbeddings
 from langchain.chains import RetrievalQA
 from langchain_openai import OpenAI
-import fire
-import os
 from dotenv import load_dotenv
 
 from src.constants import PROMPT_TEMPLATE, VECTORSTORE_PATH
 from src.database import get_retriever
 
-
 load_dotenv()
 
 embeddings = OpenAIEmbeddings()
 
+
 retriever = get_retriever(VECTORSTORE_PATH, embeddings)
+
 
 qa_chain = RetrievalQA.from_chain_type(
     llm=OpenAI(temperature=0.2),
@@ -23,12 +25,23 @@ qa_chain = RetrievalQA.from_chain_type(
 )
 
 
-def main(
-    question: str = "Who should I pick as supervisor for my thesis 'Train Rescheduling and Track Closure Optimization'",
-):
-    formatted_prompt = PROMPT_TEMPLATE.format(question=question)
-    print(qa_chain.invoke(formatted_prompt)["result"])
+app = FastAPI()
 
 
-if __name__ == "__main__":
-    fire.Fire(main)
+class DetectionRequest(BaseModel):
+    data: str
+
+
+@app.post("/recommend")
+async def recommend(data: DetectionRequest):
+    formatted_prompt = PROMPT_TEMPLATE.format(question=data.data)
+    output = qa_chain.invoke(formatted_prompt)["result"]
+
+    response = {"response": output}
+
+    return response
+
+
+@app.get("/health")
+async def health():
+    return {"status": "Healthy"}
