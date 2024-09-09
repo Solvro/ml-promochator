@@ -16,8 +16,10 @@ W tym repozytorium znajduje się kod systemu rekomendacyjnego opartego na dużyc
 3. **[Development](#development)**
    1. [Quick start](#quick-start)
    2. [Launching](#launching)
-   2. [Data managment](#data-managment)
-   3. [Github workflow](#github-workflow)
+   3. [Docker](#docker)
+   3. [Example docker usage](#docker-usage)
+   4. [Data managment](#data-managment)
+   5. [Github workflow](#github-workflow)
 4. **[Current team](#current-team)**
 
 ## Description
@@ -91,6 +93,34 @@ Before running recomend.py, please ensure that you have downloaded the authors_w
    ```
    python scripts/recomend.py --question="your's question"
    ```
+
+### Docker
+
+It is also possible to use PromoCHATor's API. To do it go to project's directory and run
+
+   ```
+   docker build -t <app name> .
+   ```
+
+Then run
+
+   ```
+   docker run  -p 8000:8000 <app name>
+   ```
+
+### Example docker usage
+
+   ```
+   curl -X POST "http://localhost:8000/recommend" \
+      -H "Content-Type: application/json" \
+      -d '{"data": "Deep Generative Models"}'
+   ```
+
+response:
+
+```
+{"response":"\n1. Supervisor's name: dr hab. inż. Maciej Zięba\nFaculty: Faculty of Information and Communication Technology\nResearch papers:\n- Ensemble boosted trees with synthetic features generation in application to bankruptcy prediction\n- Boosted SVM for extracting rules from imbalanced data in application to prediction of the post-operative life expectancy in the lung cancer patients\n- Classification restricted Boltzmann machine for comprehensible credit scoring model\n- Adversarial autoencoders for compact representations of 3D point clouds\n- Bingan: Learning compact binary descriptors with a regularized gan\n\n2. Supervisor's name: prof. dr hab. inż. Jerzy Świątek\nFaculty: Faculty of Information and Communication Technology\nResearch papers:\n- Boosted SVM for extracting rules from imbalanced data in application to prediction of the post-operative life expectancy in the lung cancer patients\n- Generative adversarial networks: recent developments\n- System analysis techniques in ehealth systems: A case study\n- Ensemble classifier for solving credit scoring problems\n- Accelerated learning for restricted Boltzmann machine with momentum term\n\n3. Supervisor's name: dr inż. Dariusz Więcek\nFaculty: Faculty of Information and Communication Technology\nResearch papers:\n- Smart connected logistics\n"}
+```
 
 ### Data managment
 
