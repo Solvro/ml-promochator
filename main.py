@@ -32,17 +32,8 @@ class DetectionRequest(BaseModel):
     data: str
 
 
-@app.post("/detect")
-async def detect(data: DetectionRequest):
-    """
-    Endpoint to process plain text input.
-
-    Args:
-        data (str): The plain text data sent in the POST request.
-
-    Returns:
-        dict: A dictionary with the original data and a message.
-    """
+@app.post("/recommend")
+async def recommend(data: DetectionRequest):
     formatted_prompt = PROMPT_TEMPLATE.format(question=data.data)
     output = qa_chain.invoke(formatted_prompt)["result"]
 
@@ -53,10 +44,4 @@ async def detect(data: DetectionRequest):
 
 @app.get("/health")
 async def health():
-    """
-    Health check endpoint to ensure the API is running.
-
-    Returns:
-        dict: A simple dictionary with a status message.
-    """
     return {"status": "Healthy"}
