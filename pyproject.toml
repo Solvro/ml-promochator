@@ -43,8 +43,8 @@ test = [
 ]
 dev = ["ml-promochator[jupyter, lint, test]"]
 
-[tool.setuptools.packages.find]
-where = ["src"]
+[tool.setuptools]
+packages = ["src"]
 
 [tool.ruff]
 select = [
