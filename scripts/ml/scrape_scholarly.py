@@ -1,4 +1,4 @@
-from utils import scrape_to_csv
+from app.utils import scrape_to_csv
 
 import fire
 

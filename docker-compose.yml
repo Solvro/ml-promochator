@@ -1,0 +1,61 @@
+name: promochator
+
+services:
+  vectordb:
+    image: ankane/pgvector
+    ports:
+      - "5433:5432"
+    environment:
+      - POSTGRES_DB:${POSTGRES_DB?Variable not set}
+      - POSTGRES_USER:${POSTGRES_USER?Variable not set}
+      - POSTGRES_PASSWORD:${POSTGRES_PASSWORD?Variable not set}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  backend:
+    image: '${DOCKER_IMAGE_BACKEND?Variable not set}:${TAG-latest}'
+    depends_on:
+      - db
+    env_file:
+      - .env
+    environment:
+      - DOMAIN=${DOMAIN}
+      - ENVIRONMENT=${ENVIRONMENT}
+      - BACKEND_CORS_ORIGINS=${BACKEND_CORS_ORIGINS}
+      - POSTGRES_SERVER=db
+      - POSTGRES_PORT=${POSTGRES_PORT}
+      - POSTGRES_DB:${POSTGRES_DB?Variable not set}
+      - POSTGRES_USER:${POSTGRES_USER?Variable not set}
+      - POSTGRES_PASSWORD:${POSTGRES_PASSWORD?Variable not set}
+      - LANGSMITH_API_KEY:${LANGSMITH_API_KEY}
+      - LANGSMITH_TRAYCING:${LANGSMITH_TRAYCING}
+      - OPENAI_API_KEY:${OPENAI_API_KEY?Variable not set}
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+      target: development
+  
+  ollama:
+    container_name: ollama
+    image: '${DOCKER_IMAGE_OLLAMA?Variable not set}:${TAG-latest}'
+    ports:
+      - "11434:11434"
+    healthcheck:
+      test: ollama --version || exit 1
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    pull_policy: always
+    tty: true
+    restart: unless-stopped
+    volumes:
+      - ollama:/root/.ollama
+
+volumes:
+  postgres_data:
+  ollama:

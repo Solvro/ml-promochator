@@ -6,8 +6,8 @@ from langchain.chains import RetrievalQA
 from langchain_openai import OpenAI
 from dotenv import load_dotenv
 
-from src.constants import PROMPT_TEMPLATE, VECTORSTORE_PATH
-from src.database import get_retriever
+from app.core.config import PROMPT_TEMPLATE, VECTORSTORE_PATH
+from app.core.database import get_retriever
 
 load_dotenv()
 
