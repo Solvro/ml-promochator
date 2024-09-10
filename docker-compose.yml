@@ -20,14 +20,14 @@ services:
   backend:
     image: '${DOCKER_IMAGE_BACKEND?Variable not set}:${TAG-latest}'
     depends_on:
-      - db
+      - vectordb
     env_file:
       - .env
     environment:
       - DOMAIN=${DOMAIN}
       - ENVIRONMENT=${ENVIRONMENT}
       - BACKEND_CORS_ORIGINS=${BACKEND_CORS_ORIGINS}
-      - POSTGRES_SERVER=db
+      - POSTGRES_SERVER=vectordb
       - POSTGRES_PORT=${POSTGRES_PORT}
       - POSTGRES_DB:${POSTGRES_DB?Variable not set}
       - POSTGRES_USER:${POSTGRES_USER?Variable not set}
