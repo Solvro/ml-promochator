@@ -9,6 +9,8 @@ import string
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 from nltk.stem import PorterStemmer
+import pandas as pd
+import PyPDF2
 
 
 pg = ProxyGenerator()
@@ -71,6 +73,26 @@ def scrape_to_csv(staff_data_path: str, csv_path: str) -> None:
                         )
 
 
+def add_apd_data(input_csv: str, output_csv: str, json_path: str, abstracts_path: str):
+    _setup_nltk_resources()
+    
+    promotor_to_theses = _get_theses(json_path, abstracts_path)
+    with open(input_csv, 'r', encoding='utf-8') as infile, open(output_csv, 'w', newline='', encoding='utf-8') as outfile:
+        reader = csv.DictReader(infile)
+        fieldnames = reader.fieldnames + ["Supervisor's Theses"]
+        writer = csv.DictWriter(outfile, fieldnames=fieldnames)
+        writer.writeheader()
+
+        for row in reader:
+            supervisor_name = row["Supervisor's name"]
+            theses = promotor_to_theses.get(supervisor_name, {})
+            
+            row["Supervisor's Theses"] = json.dumps(theses, ensure_ascii=False)
+            
+            writer.writerow(row)
+
+
+
 def _scrape_author_data(author_name: str) -> tuple[str, str, dict[str, str]]:
     search_query = scholarly.search_author(author_name)
     try:
@@ -128,6 +150,35 @@ def _text_compression_pipeline_w_stemming(text: str) -> str:
 
     return " ".join(processed_text)
 
+def _get_theses(json_path: str, abstracts_path: str):
+    with open(json_path, 'r', encoding='utf-8') as json_file:
+        thesis_data = json.load(json_file)
+
+    promotor_to_theses = {}
+    for thesis in thesis_data:
+        try:
+            promotor = thesis["thesis_promotor"]
+        except KeyError:
+            continue
+        if promotor not in promotor_to_theses:
+            promotor_to_theses[promotor] = {}
+        if thesis["en_abstract"] != '' and not thesis["en_abstract"].startswith('http'):
+            promotor_to_theses[promotor][thesis["en_title"]] = _text_compression_pipeline(thesis["en_abstract"])
+        else:
+            promotor_to_theses[promotor][thesis["en_title"]] = _read_pdf_abstract(f'{abstracts_path}/en/en_abstract_id_{thesis["thesis_id"]}.pdf')
+    return promotor_to_theses
+
+def _read_pdf_abstract(abstract_path: str):
+    try:
+        with open(abstract_path, 'rb') as file:
+            reader = PyPDF2.PdfReader(file)
+            text = ""
+            for page_num in range(len(reader.pages)):
+                page = reader.pages[page_num]
+                text += page.extract_text()
+            return _text_compression_pipeline(text)
+    except:
+        return ''
 
 def _setup_nltk_resources():
     try:
