@@ -7,6 +7,3 @@ User Question:
 
 Response:
 """
-
-
-VECTORSTORE_PATH = "./vectorstores/test_vectorstore"

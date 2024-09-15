@@ -24,6 +24,7 @@ Thumbs.db
 # Ignore other project-specific files
 build/
 src/ml_promochator.egg-info/
+ml_promochator.egg-info/
 
 # PyCharm
 #  JetBrains specific template is maintained in a separate JetBrains.gitignore that can

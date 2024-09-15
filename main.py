@@ -1,28 +1,12 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
 
-from langchain_openai import OpenAIEmbeddings
-from langchain.chains import RetrievalQA
-from langchain_openai import OpenAI
 from dotenv import load_dotenv
 
-from src.constants import PROMPT_TEMPLATE, VECTORSTORE_PATH
-from src.database import get_retriever
+from src.components.chains import qa_chain
+from src.components.prompts import PROMPT_TEMPLATE
 
 load_dotenv()
-
-embeddings = OpenAIEmbeddings()
-
-
-retriever = get_retriever(VECTORSTORE_PATH, embeddings)
-
-
-qa_chain = RetrievalQA.from_chain_type(
-    llm=OpenAI(temperature=0.2),
-    chain_type="stuff",
-    retriever=retriever,
-    return_source_documents=True,
-)
 
 
 app = FastAPI()
