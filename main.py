@@ -1,12 +1,8 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
 
-from dotenv import load_dotenv
-
 from src.components.chains import qa_chain
 from src.components.prompts import PROMPT_TEMPLATE
-
-load_dotenv()
 
 
 app = FastAPI()
