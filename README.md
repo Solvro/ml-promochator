@@ -1,7 +1,7 @@
 # PromoCHATor
 
 <p align="center">
-    <img src="./assets/solvro.png">
+    <img src="./.assets/solvro.png">
 </p>
 
 # Solvro ML - PromoCHATor
@@ -31,7 +31,7 @@ This repository contains code of recommendation system, which is based on large 
 Project uses following languages and technologies
 * Python 3
 * LangChain
-* WebUI
+* Ollama
 
 ## Development
 ### Quick start

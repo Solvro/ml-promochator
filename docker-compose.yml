@@ -21,12 +21,7 @@ services:
   backend:
     image: '${DOCKER_IMAGE_BACKEND?Variable not set}:${TAG-latest}'
     depends_on:
-      vectordb:
-        condition: service_healthy
-        restart: true
-      ollama:
-        condition: service_healthy
-        restart: true
+      - db
     env_file:
       - .env
     environment:
