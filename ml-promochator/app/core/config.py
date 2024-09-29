@@ -58,6 +58,8 @@ class Settings(BaseSettings):
             path=self.POSTGRES_DB,
         )
     
+    CSV_DATASET_PATH: str
+
     # For model
     RAG_MODEL: str
     RAG_CHUNKS_SIZE: int
