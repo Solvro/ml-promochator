@@ -1,0 +1,12 @@
+defaults:
+  api:
+    - api_str: "/api"
+  rag:
+    - model: ollama
+    - chunks_size: 1000
+    - chunks_overlap: 0
+    - embedding_dim: 1536
+    - embedding_model_function:
+    - prompt_template: "prompts/default.txt"
+
+tags: ["dev"]

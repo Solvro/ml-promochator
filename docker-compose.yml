@@ -2,13 +2,14 @@ name: promochator
 
 services:
   vectordb:
-    image: ankane/pgvector
+    image: ${DOCKER_IMAGE_POSTGRES?Variable not set}:${TAG-latest}'
     ports:
-      - "5433:5432"
+      - "${POSTGRES_PORT}:${POSTGRES_PORT}"
     environment:
-      - POSTGRES_DB:${POSTGRES_DB?Variable not set}
-      - POSTGRES_USER:${POSTGRES_USER?Variable not set}
-      - POSTGRES_PASSWORD:${POSTGRES_PASSWORD?Variable not set}
+      - POSTGRES_PORT=${POSTGRES_PORT}
+      - POSTGRES_DB=${POSTGRES_DB?Variable not set}
+      - POSTGRES_USER=${POSTGRES_USER?Variable not set}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD?Variable not set}
     healthcheck:
       test: ["CMD-SHELL", "pg_isready"]
       interval: 10s
@@ -20,31 +21,38 @@ services:
   backend:
     image: '${DOCKER_IMAGE_BACKEND?Variable not set}:${TAG-latest}'
     depends_on:
-      - db
+      vectordb:
+        condition: service_healthy
+        restart: true
+      ollama:
+        condition: service_healthy
+        restart: true
     env_file:
       - .env
     environment:
       - DOMAIN=${DOMAIN}
       - ENVIRONMENT=${ENVIRONMENT}
       - BACKEND_CORS_ORIGINS=${BACKEND_CORS_ORIGINS}
-      - POSTGRES_SERVER=db
+      - POSTGRES_SERVER=vectordb
       - POSTGRES_PORT=${POSTGRES_PORT}
-      - POSTGRES_DB:${POSTGRES_DB?Variable not set}
-      - POSTGRES_USER:${POSTGRES_USER?Variable not set}
-      - POSTGRES_PASSWORD:${POSTGRES_PASSWORD?Variable not set}
-      - LANGSMITH_API_KEY:${LANGSMITH_API_KEY}
-      - LANGSMITH_TRAYCING:${LANGSMITH_TRAYCING}
-      - OPENAI_API_KEY:${OPENAI_API_KEY?Variable not set}
+      - POSTGRES_DB=${POSTGRES_DB?Variable not set}
+      - POSTGRES_USER=${POSTGRES_USER?Variable not set}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD?Variable not set}
+      - OPENAI_API_KEY=${OPENAI_API_KEY?Variable not set}
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/utils/health-check/"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     build:
       context: .
-      dockerfile: ./Dockerfile
-      target: development
-  
+      dockerfile: ./ml-promochator/Dockerfile
+      target: ${DOCKER_BACKEND_TARGET}
+
   ollama:
-    container_name: ollama
     image: '${DOCKER_IMAGE_OLLAMA?Variable not set}:${TAG-latest}'
     ports:
-      - "11434:11434"
+      - "${OLLAMA_PORT}:${OLLAMA_PORT}"
     healthcheck:
       test: ollama --version || exit 1
       interval: 10s

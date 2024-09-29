@@ -23,7 +23,7 @@ Thumbs.db
 
 # Ignore other project-specific files
 build/
-src/ml_promochator.egg-info/
+ml-promochator/ml_promochator.egg-info/
 
 # PyCharm
 #  JetBrains specific template is maintained in a separate JetBrains.gitignore that can
@@ -33,9 +33,9 @@ src/ml_promochator.egg-info/
 #.idea/
 
 # Dataset directory
-.data/*
-!.data/.gitkeep 
+data/*
+!data/.gitkeep 
 
 # Vectorstores directory
-.vectorstores/*
-!.vectorstores/.gitkeep
+vectorstores/*
+!vectorstores/.gitkeep
