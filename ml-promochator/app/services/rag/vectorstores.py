@@ -1,6 +1,7 @@
 from typing import List
 
 from langchain_core.embeddings.embeddings import Embeddings
+from langchain_openai import OpenAIEmbeddings
 from langchain.schema import Document
 from langchain.vectorstores.pgvector import PGVector
 from sqlmodel import Session, select
@@ -64,5 +65,5 @@ def init_db_with_csv(filepath: str, session: Session) -> None:
                                                  settings.CHUNKS_SIZE,
                                                  settings.CHUNKS_OVERLAP)
     documents = loader_with_splitter.load_and_split()
-    embeddings = generate_embeddings(documents)
+    embeddings = generate_embeddings(documents, OpenAIEmbeddings)
     store_data_in_db(documents, embeddings, session)

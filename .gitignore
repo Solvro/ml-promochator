@@ -34,8 +34,4 @@ ml-promochator/ml_promochator.egg-info/
 
 # Dataset directory
 data/*
-!data/.gitkeep 
-
-# Vectorstores directory
-vectorstores/*
-!vectorstores/.gitkeep
+!data/.gitkeep

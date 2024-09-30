@@ -10,6 +10,8 @@ RUN echo "Installing packages..."
 RUN pip install --upgrade pip
 RUN pip install --no-cache-dir .[dev]
 
+COPY ../data/authors_with_papers.csv /app/
+
 COPY ./config/ /app/
 
 COPY ./playground/ /app/
@@ -28,11 +30,15 @@ RUN echo "Installing packages..."
 RUN pip install --upgrade pip
 RUN pip install --no-cache-dir .
 
+COPY ../data/authors_with_papers.csv /app/
+
 COPY ./config/ /app/
 
 COPY ./app /app/app
 
+COPY ./entrypoint.sh /app/entrypoint.sh
+
 EXPOSE 8000
 
 RUN echo "Running app..."
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["./entrypoint.sh"]

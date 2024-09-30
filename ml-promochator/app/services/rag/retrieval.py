@@ -1,8 +1,10 @@
 from langchain.chains import RetrievalQA
 from langchain_core.language_models.llms import BaseLLM
+from langchain_openai import OpenAIEmbeddings
 
 from app.api.deps import SessionDep
 from app.core.config import settings
+from app.services.rag.models import get_model
 from app.services.rag.prompt import Prompt
 from app.services.rag.vectorstores import VectorStore
 
@@ -26,15 +28,15 @@ class RAGSystem:
         return response
 
 
-async def recommend_supervisor(
+def recommend_supervisor(
     text: str,
     session: SessionDep
 ) -> str:
     vectorstore = VectorStore(session,
-                              settings.EMBEDDING_MODEL_FUNCTION)
+                              OpenAIEmbeddings)
     rag_system = RAGSystem(vectorstore,
-                           settings.MODEL,
-                           settings.PROMPT_TEMPLATE)
+                           get_model(),
+                           settings.PROMPT_TEMPLATE_FILE)
 
     answer = rag_system.answer_query(text)
-    return {"query": text, "answer": answer}
+    return answer

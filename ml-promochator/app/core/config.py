@@ -20,13 +20,12 @@ def parse_cors(v: Any) -> list[str] | str:
 
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
-        env_file="../../../.env",
-        yaml_file="../../config/default.yaml",
+        env_file="../.env",
         env_ignore_empty=True,
         extra="ignore",
         env_file_encoding='utf-8'
     )
-    API_API_STR: str
+    API_API_STR: str = "/api"
     ENVIRONMENT: Literal["local", "staging", "production"] = "local"
 
     BACKEND_CORS_ORIGINS: Annotated[
@@ -60,13 +59,10 @@ class Settings(BaseSettings):
     
     CSV_DATASET_PATH: str
 
-    # For model
-    RAG_MODEL: str
-    RAG_CHUNKS_SIZE: int
-    RAG_CHUNKS_OVERLAP: int
-    RAG_EMBEDDING_DIM: int
-    RAG_EMBEDDING_MODEL_FUNCTION: str
-    RAG_PROMPT_TEMPLATE:str
+    CHUNK_SIZE: int
+    CHUNK_OVERLAP: int
+    EMBEDDING_DIM: int
+    PROMPT_TEMPLATE_FILE:str
 
 
 settings = Settings()

@@ -33,7 +33,16 @@ services:
       - POSTGRES_DB=${POSTGRES_DB?Variable not set}
       - POSTGRES_USER=${POSTGRES_USER?Variable not set}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD?Variable not set}
+      - INITIALIZE_DATABASE=${INITIALIZE_DATABASE?Variable not set}
+      - CSV_DATASET_PATH=${CSV_DATASET_PATH?Variable not set}
       - OPENAI_API_KEY=${OPENAI_API_KEY?Variable not set}
+      - DISABLE_GPT4=${DISABLE_GPT4?Variable not set}
+      - OLLAMA_AVAILABLE=${OLLAMA_AVAILABLE?Variable not set}
+      - MODEL=${MODEL?Variable not set}
+      - CHUNK_SIZE=${CHUNK_SIZE?Variable not set}
+      - CHUNK_OVERLAP=${CHUNK_OVERLAP?Variable not set}
+      - EMBEDDING_DIM=${EMBEDDING_DIM?Variable not set}
+      - PROMPT_TEMPLATE_FILE=${PROMPT_TEMPLATE_FILE?Variable not set}
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/api/utils/health-check/"]
       interval: 10s
