@@ -33,5 +33,5 @@ ml-promochator/ml_promochator.egg-info/
 #.idea/
 
 # Dataset directory
-data/*
-!data/.gitkeep
+ml-promochator/data/*
+!ml-promochator/data/.gitkeep

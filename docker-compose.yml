@@ -2,7 +2,7 @@ name: promochator
 
 services:
   vectordb:
-    image: ${DOCKER_IMAGE_POSTGRES?Variable not set}:${TAG-latest}'
+    image: '${DOCKER_IMAGE_POSTGRES}'
     ports:
       - "${POSTGRES_PORT}:${POSTGRES_PORT}"
     environment:
@@ -20,8 +20,14 @@ services:
 
   backend:
     image: '${DOCKER_IMAGE_BACKEND?Variable not set}:${TAG-latest}'
+    ports:
+      - "${BACKEND_PORT}:${BACKEND_PORT}"
     depends_on:
-      - db
+      vectordb:
+        condition: service_healthy
+        restart: true
+      ollama:
+        condition: service_healthy
     env_file:
       - .env
     environment:
@@ -49,9 +55,15 @@ services:
       timeout: 5s
       retries: 5
     build:
-      context: .
-      dockerfile: ./ml-promochator/Dockerfile
+      context: ./ml-promochator
       target: ${DOCKER_BACKEND_TARGET}
+    develop:
+      watch:
+        - path: ./ml-promochator
+          action: sync
+          target: /promochator
+        - path: ./ml-promochator/pyproject.toml
+          action: rebuild
 
   ollama:
     image: '${DOCKER_IMAGE_OLLAMA?Variable not set}:${TAG-latest}'

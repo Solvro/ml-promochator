@@ -9,7 +9,7 @@
 W tym repozytorium znajduje się kod systemu rekomendacyjnego opartego na dużych modelach językowych. System w postaci chatbota, na podstawie dorobku naukowego pracowników Politechniki Wrocławskiej, dopasowywuje odpowiedniego promotora do podanego przez studenta tematu pracy dyplomowej
 </p>
 
-## Table of contents
+## Spis treści
 
 1. **[Opis](#opis)**
 2. **[Technologie](#technologie)**

@@ -1,6 +1,7 @@
 import uuid
-from typing import Optional
+from typing import Any, Optional
 
+from sqlalchemy import Column
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlmodel import  SQLModel ,Field, Relationship
 from pgvector.sqlalchemy import Vector
@@ -22,6 +23,6 @@ class Supervisor(SQLModel, table=True):
 class TextChunk(SQLModel, table=True):
     id: int = Field(default=None, primary_key=True)
     page_content: str
-    embedding: Optional[Vector] = Field(sa_column=Vector(settings.EMBEDDING_DIM))    
+    embedding: Any = Field(sa_column=Column(Vector(settings.EMBEDDING_DIM)))   
     supervisor_id: int = Field(default=None, foreign_key="supervisor.id")
     supervisor: Supervisor = Relationship(back_populates="chunks")

@@ -1,8 +1,12 @@
 FROM python:3.10-slim AS base
 
-WORKDIR /app/
+ENV PYTHONUNBUFFERED=1
 
-COPY ./pyproject.toml /backend/pyproject.toml
+WORKDIR /promochator
+
+ENV PYTHONPATH=/promochator
+
+COPY ./pyproject.toml /promochator/pyproject.toml
 
 # Development stage
 FROM base AS development
@@ -10,19 +14,24 @@ RUN echo "Installing packages..."
 RUN pip install --upgrade pip
 RUN pip install --no-cache-dir .[dev]
 
-COPY ../data/authors_with_papers.csv /app/
+COPY ./data /promochator/data
 
-COPY ./config/ /app/
+COPY ./config /promochator/config
 
-COPY ./playground/ /app/
+COPY ./playground /promochator/playground
 
-COPY ./Makefile /app/
+COPY ./Makefile /promochator/Makefile 
 
-COPY ./app /app/app
+COPY ./app /promochator/app
+
+COPY ./alembic.ini /promochator/alembic.ini
+
+COPY ./entrypoint.sh /promochator/entrypoint.sh
 
 EXPOSE 8000 8888
 
 RUN echo "Service is ready to run in development mode"
+CMD ["./entrypoint.sh"]
 
 # Production stage
 FROM base AS production
@@ -30,13 +39,15 @@ RUN echo "Installing packages..."
 RUN pip install --upgrade pip
 RUN pip install --no-cache-dir .
 
-COPY ../data/authors_with_papers.csv /app/
+COPY ./data /promochator/data
 
-COPY ./config/ /app/
+COPY ./config /promochator/config
 
-COPY ./app /app/app
+COPY ./app /promochator/app
 
-COPY ./entrypoint.sh /app/entrypoint.sh
+COPY ./alembic.ini /promochator/alembic.ini
+
+COPY ./entrypoint.sh /promochator/entrypoint.sh
 
 EXPOSE 8000
 

@@ -3,15 +3,13 @@ requires = ["setuptools", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "ml-promochator"
-version = "0.0.1"
+name = "app"
+version = "0.1.0"
 description = "Codebase for promochator"
 requires-python = ">=3.8"
 dependencies = [
     "alembic~=1.13.2",
     "fastapi==0.112.2",
-    "fire~=0.6.0",
-    "jupyter~=1.0.0",
     "langchain~=0.2.10",
     "langchain-community~=0.2.12",
     "langchain-openai~=0.1.22",
@@ -29,6 +27,8 @@ dependencies = [
 
 [project.optional-dependencies]
 jupyter = [
+    "fire~=0.6.0",
+    "jupyter~=1.0.0",
     "jupyterlab~=3.6",
     "matplotlib ~= 3.7",
     "pandas ~= 2.0",
@@ -42,10 +42,7 @@ test = [
     "pytest-sugar ~= 0.9",
     "pytest-xdist ~= 2.5"
 ]
-dev = ["ml-promochator[jupyter, lint, test]"]
-
-[tool.setuptools]
-packages = ["app"]
+dev = ["app[jupyter, lint, test]"]
 
 [tool.ruff]
 select = [
