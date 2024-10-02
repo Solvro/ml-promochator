@@ -9,154 +9,120 @@
 W tym repozytorium znajduje się kod systemu rekomendacyjnego opartego na dużych modelach językowych. System w postaci chatbota, na podstawie dorobku naukowego pracowników Politechniki Wrocławskiej, dopasowywuje odpowiedniego promotora do podanego przez studenta tematu pracy dyplomowej
 </p>
 
-## Table of contents
+## Spis treści
 
-1. **[Description](#description)**
-2. **[Technologies](#technologies)**
-3. **[Development](#development)**
-   1. [Quick start](#quick-start)
-   2. [Launching](#launching)
-   3. [Docker](#docker)
-   3. [Example docker usage](#docker-usage)
-   4. [Data managment](#data-managment)
+1. **[Opis](#opis)**
+2. **[Technologie](#technologie)**
+3. **[Rozwój projektu](#rozwoj)**
+   1. [Szybki start](#szybki-start)
+   2. [Deployment](#deployment)
+   3. [URL](#url)
+   3. [Przykład użycia](#przyklad-uzycia)
+   4. [Zbiór danych](#zbior-danych)
    5. [Github workflow](#github-workflow)
-4. **[Current team](#current-team)**
+4. **[Nasz zespół](#nasz-zespol)**
 
-## Description
+## Opis
 <p align="justify"> 
-This repository contains code of recommendation system, which is based on large language models. System should match supervisor for thesis title or description given by user
+W tym repozytorium znajduje się kod systemu rekomendacyjnego opartego na dużych modelach językowych. System w postaci chatbota, na podstawie dorobku naukowego pracowników Politechniki Wrocławskiej, dopasowywuje odpowiedniego promotora do podanego przez studenta tematu pracy dyplomowej
 </p>
 
-## Technologies
-Project uses following languages and technologies
+## Technologie
+Projekt został stworzony z wykorzystaniem następujących technologii:
 * Python 3
 * LangChain
-* WebUI
+* Ollama
 
-## Development
-### Quick start
-If you want to setup project locally
+## Rozwój projektu
+### Szybki start
+Jeśli chcesz lokalnie postawić projekt
 
-1. Create new virtual environment:
-
-   If you use _conda_
+1. Sklonuj repozytorium:
 
    ```
-   conda create --name your-environment-name python=3.10
+   git clone https://github.com/Solvro/ml-promochator.git && cd ml-promochator
    ```
 
-   Alternatively use any other virtual enviroment manager of your choice.
+3. Uzupełnij `.env` na podstawie `.env.example`
 
-2. Activate environment
+3. Uruchom [Dockera](https://docs.docker.com/compose/)
    ```
-   conda activate your-environment-name
-   ```
-
-3. Make sure you use recent _pip_ version
-
-   ```
-   python -m pip install --upgrade pip
+   docker compose watch
    ```
 
-4. Install packages
+### Deployment
+Jeśli chcesz postawić projekt na serwerze
+
+1. Sklonuj repozytorium:
 
    ```
-   python -m pip install -e .[dev]
+   git clone https://github.com/Solvro/ml-promochator.git && cd ml-promochator
    ```
 
-5. Enable pre-commit
+3. Uzupełnij `.env` na podstawie `.env.example`
 
+3. Uruchom [Dockera](https://docs.docker.com/compose/)
    ```
-   pre-commit install
-   ```
-
-6. create `.env` file and paste your OpenAI API Key
-
-   ```
-   OPEN_AI_API_KEY = "<yourkey>"
+   docker compose up -d
    ```
 
-After these steps project scripts are ready to launch
+Jeżeli chcesz zainicjalizować bazę danych, upewnij się, że pobrałeś plik `authors_with_papers.csv` z [projektowego datasetu](https://drive.google.com/drive/folders/1odcaykO5uGtJXGugjCm8UioFT2XWWHNM). Umieść plik w folderze `data` w katalogu z projektem.
+
+### URL
+
+Bazowy url: `http://localhost:8000`
+
+Dokumentacja: `http://localhost:8000/docs`
 
 
-### Launching
-1. scrape_scholarly.py
+### Przykład użycia
 
-   ```
-   python scripts/scrape_scholarly.py
-   ```
-
-Before running recomend.py, please ensure that you have downloaded the authors_with_papers.csv file from the [promochator dataset](https://drive.google.com/drive/folders/1odcaykO5uGtJXGugjCm8UioFT2XWWHNM). Place the file in the data folder within your project directory.
-
-2. recomend.py
-
-   ```
-   python scripts/recomend.py --question="your's question"
-   ```
-
-### Docker
-
-It is also possible to use PromoCHATor's API. To do it go to project's directory and run
-
-   ```
-   docker build -t <app name> .
-   ```
-
-Then run
-
-   ```
-   docker run  -p 8000:8000 <app name>
-   ```
-
-### Example docker usage
-
+Zapytanie
    ```
    curl -X POST "http://localhost:8000/recommend" \
       -H "Content-Type: application/json" \
       -d '{"data": "Deep Generative Models"}'
    ```
 
-response:
+Odpowiedź
 
 ```
 {"response":"\n1. Supervisor's name: dr hab. inż. Maciej Zięba\nFaculty: Faculty of Information and Communication Technology\nResearch papers:\n- Ensemble boosted trees with synthetic features generation in application to bankruptcy prediction\n- Boosted SVM for extracting rules from imbalanced data in application to prediction of the post-operative life expectancy in the lung cancer patients\n- Classification restricted Boltzmann machine for comprehensible credit scoring model\n- Adversarial autoencoders for compact representations of 3D point clouds\n- Bingan: Learning compact binary descriptors with a regularized gan\n\n2. Supervisor's name: prof. dr hab. inż. Jerzy Świątek\nFaculty: Faculty of Information and Communication Technology\nResearch papers:\n- Boosted SVM for extracting rules from imbalanced data in application to prediction of the post-operative life expectancy in the lung cancer patients\n- Generative adversarial networks: recent developments\n- System analysis techniques in ehealth systems: A case study\n- Ensemble classifier for solving credit scoring problems\n- Accelerated learning for restricted Boltzmann machine with momentum term\n\n3. Supervisor's name: dr inż. Dariusz Więcek\nFaculty: Faculty of Information and Communication Technology\nResearch papers:\n- Smart connected logistics\n"}
 ```
 
-### Data managment
+### Zbiór danych
 
-Dataset should be kept in `data` folder. If you want to access solvro dataset, you could try to contact project manager or techlead
+Dane powinny być przechowywane w katalogu `data`. Jeżeli potrzebujesz dostępu do zbioru danych Solvro, zgłoś się do Project Managera albo Tech Leada projektu.
 
 > [!WARNING]
-> Please do not push dataset to remote repository
+> Proszę nie pushować zbioru danych na zdalne repozytorium!
 
 
 ### Github workflow
 
-When you had assigned yourself to new task, you should stick to these steps
-1. `git checkout main` Check out main branch
-2. `git pull origin main` Pull current changes from main branch
-3. `git fetch` Be up to date with remote branches
-4. `git checkout -b type/task` Create new task branch
-5. `git add .` Add all changes we have made
-6. `git commit -m "My changes description"` Commit changes with proper description
-7. `git push origin type/task` Pushing our changes to remote branch
-8. On Github we are going to make Pull Request (PR) from our remote branch
+Gdy przypiszesz się do nowego zadania, powinieneś przestrzegać tych zasad
+1. `git checkout main` Wróć na główną gałąź
+2. `git pull origin main` Zaaktualizuj główną gałąź
+3. `git fetch` Zaaktualizuj pozostałe gałęzie
+4. `git checkout -b type/task` Stwórz gałąź z nowym zadaniem
+5. `git add .` Dodaj wszystkie zmiany, jakie wykonałaś/wykonałeś
+6. `git commit -m "My changes description"` Zcommituj zmiany, odpowiednio je opisując
+7. `git push origin type/task` Zpushuj zmiany na zdalne repozytorium
+8. Na Githubie powinnaś/powinieneś zrobić Pull Request (PR), ze swojej zdalnej gałęzi
 
 > [!WARNING]
-> Do not push changes directly to main branch
+> Nie pushuj zmian bezpośrednio na maina!
 
-For further information read Solvro handbook
+Aby dowiedzieć się więcej szczegółów na temat pracy w projekcie,
+przeczytaj handbook Solvro
 
 **Github Solvro Handbook 🔥** - https://docs.google.com/document/d/1Sb5lYqYLnYuecS1Essn3YwietsbuLPCTsTuW0EMpG5o/edit?usp
 
-## Current team
-This is our current team
-- [@LukiLenkiewicz](https://github.com/LukiLenkiewicz) - Tech Lead
-- [@Micz26](https://github.com/Micz26) - ML Engineer
-- [@farqlia](https://github.com/farqlia) - ML Engineer
-- [@AgataGro](https://github.com/AgataGro) - ML Engineer
-- [@dekompot](https://github.com/dekompot) - ML Engineer
-- [@b4rt4s](https://github.com/b4rt4s) - ML Engineer
-- [@Woleek](https://github.com/Woleek) - ML Engineer
-- [@WiktoriaFrost](https://github.com/WiktoriaFrost) - ML Engineer
-- [@Barionetta](https://github.com/Barionetta) - Project Manager
+## Nasz zespół
+To nasz obecny zespół
+
+|             |             |               |
+| :---        |    :----:   |          ---: |
+| <img src="https://avatars.githubusercontent.com/u/87516463?v=4" style="width:200px;"> <br>[@LukiLenkiewicz](https://github.com/LukiLenkiewicz) - Tech Lead     | <img src="https://avatars.githubusercontent.com/u/122210130?v=4" style="width:200px;"> <br>[@Micz26](https://github.com/Micz26) - ML Engineer| <img src="https://avatars.githubusercontent.com/u/68340482?v=4" style="width:200px;"> <br>[@farqlia](https://github.com/farqlia) - ML Engineer |
+| <img src="https://avatars.githubusercontent.com/u/115902377?v=4" style="width:200px;"> <br>[@AgataGro](https://github.com/AgataGro) - ML Engineer | <img src="https://avatars.githubusercontent.com/u/99985667?v=4" style="width:200px;"> <br>[@dekompot](https://github.com/dekompot) - ML Engineer| <img src="https://avatars.githubusercontent.com/u/109885481?v=4" style="width:200px;"> <br>[@b4rt4s](https://github.com/b4rt4s) - ML Engineer |
+| <img src="https://avatars.githubusercontent.com/u/84938240?v=4" style="width:200px;"> <br>[@Woleek](https://github.com/Woleek) - ML Engineer | <img src="https://avatars.githubusercontent.com/u/169385041?v=4" style="width:200px;"> <br>[@WiktoriaFrost](https://github.com/WiktoriaFrost) - ML Engineer | <img src="https://avatars.githubusercontent.com/u/93910163?v=4" style="width:200px;"> <br>[@Barionetta](https://github.com/Barionetta) - Project Manager |
