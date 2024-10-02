@@ -12,7 +12,7 @@ from app.services.rag.loaders import CSVLoaderWithSplitter
 
 
 class VectorStore:
-    def __init__(self, session: Session, embedding_function: Embeddings):
+    def __init__(self, session: Session, embedding_function: Embeddings, k: int = 5):
         self.session = session
         self.embedding_function = embedding_function
         self.vectorstore = PGVector(
@@ -20,12 +20,10 @@ class VectorStore:
             embedding_function = embedding_function,
             collection_name = "supervisors"
         )
+        self.retrevier = self.vectorstore.as_retriever(search_kwargs={"k": k})
     
     def add_documents(self, documents: List[Document]):
         self.vectorstore.add_documents(documents)
-    
-    def search(self, query_embedding: List[float], k: int = 5) -> List[Document]:
-        return self.vector_store.similarity_search(query_embedding, k=k)
 
 
 def generate_embeddings(documents: List[Document], embedding_function: Embeddings) -> List[List[float]]:

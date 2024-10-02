@@ -28,10 +28,10 @@ COPY ./alembic.ini /promochator/alembic.ini
 
 COPY ./entrypoint.sh /promochator/entrypoint.sh
 
-EXPOSE 8000 8888
+EXPOSE 8000
 
 RUN echo "Service is ready to run in development mode"
-CMD ["./entrypoint.sh"]
+ENTRYPOINT ["bash", "./entrypoint.sh"]
 
 # Production stage
 FROM base AS production
@@ -52,4 +52,4 @@ COPY ./entrypoint.sh /promochator/entrypoint.sh
 EXPOSE 8000
 
 RUN echo "Running app..."
-CMD ["./entrypoint.sh"]
+ENTRYPOINT ["bash", "./entrypoint.sh"]

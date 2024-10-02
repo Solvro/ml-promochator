@@ -18,7 +18,7 @@ class RAGSystem:
         self.qa_chain = RetrievalQA.from_chain_type(
             llm=self.llm,
             chain_type="stuff",
-            retriever=self.vector_store,
+            retriever=self.vector_store.retrevier,
             return_source_documents=True,
         )
 
