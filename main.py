@@ -1,27 +1,39 @@
 from fastapi import FastAPI
+from langserve import add_routes
 from pydantic import BaseModel
 
 from src.components.chains import qa_chain
-from src.components.prompts import PROMPT_TEMPLATE
 
 
-app = FastAPI()
+# app = FastAPI()
 
 
-class DetectionRequest(BaseModel):
-    data: str
+# class DetectionRequest(BaseModel):
+#     data: str
 
 
-@app.post("/recommend")
-async def recommend(data: DetectionRequest):
-    formatted_prompt = PROMPT_TEMPLATE.format(question=data.data)
-    output = qa_chain.invoke(formatted_prompt)["result"]
+# @app.post("/recommend")
+# async def recommend(data: DetectionRequest):
+#     formatted_prompt = PROMPT_TEMPLATE.format(question=data.data)
+#     output = qa_chain.invoke(formatted_prompt)["result"]
 
-    response = {"response": output}
+#     response = {"response": output}
 
-    return response
+#     return response
 
 
-@app.get("/health")
-async def health():
-    return {"status": "Healthy"}
+# @app.get("/health")
+# async def health():
+#     return {"status": "Healthy"}
+
+app = FastAPI(
+    title="LangChain Server",
+    version="1.0",
+    description="A simple api server using Langchain's Runnable interfaces",
+)
+
+add_routes(
+    app,
+    qa_chain,
+    path="/recommend",
+)
