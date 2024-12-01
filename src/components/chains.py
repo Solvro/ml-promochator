@@ -19,12 +19,12 @@ template = ChatPromptTemplate(
 retriever = get_retriever(VECTORSTORE_PATH, openai_embeddings)
 
 
-def format_docs(docs):
-    return "\n\n".join([d.page_content for d in docs])
+def _format_docs(docs):
+    return "\n\n\n".join([d.page_content for d in docs])
 
 
 qa_chain = (
-    {"retrieved_context": retriever | format_docs, "question": RunnablePassthrough()}
+    {"retrieved_context": retriever | _format_docs, "question": RunnablePassthrough()}
     | template
     | chat_llm
 )
