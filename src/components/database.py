@@ -19,5 +19,5 @@ def get_retriever(vectorstore_path, embeddings):
         db = FAISS.from_documents(documents, embeddings)
         db.save_local(vectorstore_path)
 
-    retriever = db.as_retriever(search_kwargs={"k": 5})
+    retriever = db.as_retriever(search_kwargs={"k": 8})
     return retriever

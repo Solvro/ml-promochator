@@ -2,13 +2,20 @@ from src.components.llms import chat_llm
 from src.components.database import get_retriever
 from src.components.constants import VECTORSTORE_PATH
 from src.components.embeddings import openai_embeddings
-from src.components.prompts import PROMPT_TEMPLATE
+from src.components.prompts import PROMPT_TEMPLATE, SYSTEM_PROMPT
 
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.runnables import RunnablePassthrough
 
 
-prompt = ChatPromptTemplate.from_template(PROMPT_TEMPLATE)
+template = ChatPromptTemplate(
+    [
+        ("system", SYSTEM_PROMPT),
+        ("human", PROMPT_TEMPLATE),
+    ]
+)
+
+
 retriever = get_retriever(VECTORSTORE_PATH, openai_embeddings)
 
 
@@ -18,7 +25,7 @@ def format_docs(docs):
 
 qa_chain = (
     {"retrieved_context": retriever | format_docs, "question": RunnablePassthrough()}
-    | prompt
+    | template
     | chat_llm
 )
 
