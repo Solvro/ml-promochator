@@ -1,18 +1,21 @@
 from fastapi import FastAPI
 from langserve import add_routes
-from pydantic import BaseModel
+from langchain_core.runnables.utils import Output
 
-from src.components.chains import qa_chain
+from src.graph import recommendation_graph
+from src.components.models import InputRecommendationGeneration
 
 
 app = FastAPI(
-    title="LangChain Server",
+    title="PromoCHATor",
     version="1.0",
-    description="A simple api server using Langchain's Runnable interfaces",
+    description="An api for recommending supervisors for thesis",
 )
 
 add_routes(
     app,
-    qa_chain,
+    recommendation_graph.with_types(
+        input_type=InputRecommendationGeneration, output_type=Output
+    ),
     path="/recommend",
 )

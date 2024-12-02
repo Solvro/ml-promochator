@@ -39,6 +39,11 @@ class Recommendation(BaseModel):
         return f"# {self.hello_message}\n\n{supervisors}".strip()
 
 
+class InputRecommendationGeneration(BaseModel):
+    question: str = Field(..., title="Question anout supervisor for a thesis")
+    faculty: str = Field(..., title="Faculty of supervisor for the thesis")
+
+
 if __name__ == "__main__":
     from src.components.llms import chat_llm
     from src.components.prompts import PROMPT_TEMPLATE

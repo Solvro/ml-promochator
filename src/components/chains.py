@@ -1,5 +1,5 @@
 from src.components.llms import chat_llm
-from src.components.database import get_retriever
+from src.components.database import get_vectorstore
 from src.components.constants import VECTORSTORE_PATH
 from src.components.embeddings import openai_embeddings
 from src.components.prompts import PROMPT_TEMPLATE, SYSTEM_PROMPT
@@ -16,7 +16,9 @@ template = ChatPromptTemplate(
 )
 
 
-retriever = get_retriever(VECTORSTORE_PATH, openai_embeddings)
+vectorstore = get_vectorstore(VECTORSTORE_PATH, openai_embeddings)
+
+retriever = vectorstore.as_retriever(search_kwargs={"k": 8})
 
 
 def _format_docs(docs):

@@ -7,7 +7,7 @@ import faiss
 from src.components.loaders import load_csv
 
 
-def get_retriever(vectorstore_path, embeddings):
+def get_vectorstore(vectorstore_path, embeddings):
     if os.path.exists(vectorstore_path):
         db = FAISS.load_local(
             vectorstore_path, embeddings, allow_dangerous_deserialization=True
@@ -44,13 +44,11 @@ def get_retriever(vectorstore_path, embeddings):
                 time.sleep(60)
 
         db.save_local(vectorstore_path)
-
-    retriever = db.as_retriever(search_kwargs={"k": 10})
-    return retriever
+    return db
 
 
 if __name__ == "__main__":
     from src.components.constants import VECTORSTORE_PATH
     from src.components.embeddings import openai_embeddings
 
-    get_retriever(VECTORSTORE_PATH, openai_embeddings)
+    get_vectorstore(VECTORSTORE_PATH, openai_embeddings)
