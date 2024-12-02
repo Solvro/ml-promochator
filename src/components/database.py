@@ -1,23 +1,54 @@
 import os
-from langchain_community.document_loaders.csv_loader import CSVLoader
-from langchain_text_splitters import CharacterTextSplitter
+import time
+from uuid import uuid4
+from langchain_community.docstore.in_memory import InMemoryDocstore
 from langchain_community.vectorstores import FAISS
+import faiss
+from src.components.loaders import load_csv
 
 
-def get_retriever(vectorstore_path, embeddings):
+def get_vectorstore(vectorstore_path, embeddings):
     if os.path.exists(vectorstore_path):
         db = FAISS.load_local(
             vectorstore_path, embeddings, allow_dangerous_deserialization=True
         )
     else:
-        loader = CSVLoader(file_path="./data/authors_with_papers.csv", encoding="utf-8")
-        data = loader.load()
+        index = faiss.IndexFlatL2(len(embeddings.embed_query("hello world")))
+        db = FAISS(
+            embedding_function=embeddings,
+            index=index,
+            docstore=InMemoryDocstore(),
+            index_to_docstore_id={},
+        )
 
-        text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=0)
-        documents = text_splitter.split_documents(data)
+        documents = load_csv("./data/supervisors_data.csv")
+        uuids = [str(uuid4()) for _ in range(len(documents))]
 
-        db = FAISS.from_documents(documents, embeddings)
+        batch_size = 600
+        total_batches = (len(documents) + batch_size - 1) // batch_size
+
+        # vectorize data in batches because of openai token limit TPM (token per minute)
+        for batch_idx in range(total_batches):
+            start_idx = batch_idx * batch_size
+            end_idx = min(start_idx + batch_size, len(documents))
+            batch_docs = documents[start_idx:end_idx]
+            batch_uuids = uuids[start_idx:end_idx]
+
+            print(
+                f"Adding batch {batch_idx + 1}/{total_batches} ({len(batch_docs)} documents)..."
+            )
+            db.add_documents(documents=batch_docs, ids=batch_uuids)
+
+            if batch_idx < total_batches - 1:
+                print("Pausing for 1 minute...")
+                time.sleep(60)
+
         db.save_local(vectorstore_path)
+    return db
 
-    retriever = db.as_retriever(search_kwargs={"k": 5})
-    return retriever
+
+if __name__ == "__main__":
+    from src.components.constants import VECTORSTORE_PATH
+    from src.components.embeddings import openai_embeddings
+
+    get_vectorstore(VECTORSTORE_PATH, openai_embeddings)

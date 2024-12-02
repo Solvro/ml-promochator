@@ -1,27 +1,21 @@
 from fastapi import FastAPI
-from pydantic import BaseModel
+from langserve import add_routes
+from langchain_core.runnables.utils import Output
 
-from src.components.chains import qa_chain
-from src.components.prompts import PROMPT_TEMPLATE
-
-
-app = FastAPI()
+from src.graph import recommendation_graph
+from src.components.models import InputRecommendationGeneration
 
 
-class DetectionRequest(BaseModel):
-    data: str
+app = FastAPI(
+    title="PromoCHATor",
+    version="1.0",
+    description="An api for recommending supervisors for thesis",
+)
 
-
-@app.post("/recommend")
-async def recommend(data: DetectionRequest):
-    formatted_prompt = PROMPT_TEMPLATE.format(question=data.data)
-    output = qa_chain.invoke(formatted_prompt)["result"]
-
-    response = {"response": output}
-
-    return response
-
-
-@app.get("/health")
-async def health():
-    return {"status": "Healthy"}
+add_routes(
+    app,
+    recommendation_graph.with_types(
+        input_type=InputRecommendationGeneration, output_type=Output
+    ),
+    path="/recommend",
+)
