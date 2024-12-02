@@ -30,6 +30,12 @@ dependencies = [
 
 
 [project.optional-dependencies]
+sandbox = [
+    "jupyter~=1.0.0",
+    "scholarly~=1.7.11",
+    "fire~=0.6.0",
+    "nltk~=3.8.1",
+]
 jupyter = [
     "jupyterlab~=3.6",
     "pandas ~= 2.0",
@@ -45,7 +51,7 @@ test = [
     "pytest-xdist ~= 2.5",
     "pytest-sugar ~= 0.9",
 ]
-dev = ["ml-promochator[jupyter, lint, test]"]
+dev = ["ml-promochator[sandbox, jupyter, lint, test]"]
 
 [tool.setuptools]
 packages = ["src"]
