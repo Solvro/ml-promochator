@@ -36,7 +36,7 @@ async def _format_docs(docs):
 async def route_retriever(state: RecommendationState):
     faculty = state["faculty"]
 
-    if faculty is None:
+    if faculty == "":
         return "retrieve_supervisors"
     return "retrieve_supervisors_by_faculty"
 
