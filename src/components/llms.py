@@ -14,6 +14,6 @@ llm = llm_openai.configurable_alternatives(
     ConfigurableField(id="llm"), default_key="openai"
 )
 
-chat_llm = ChatOpenAI(model="gpt-4o-mini")
+chat_llm = ChatOpenAI(model="gpt-4o-mini", temperature=0.3)
 
 chat_llm = chat_llm.with_structured_output(Recommendation)

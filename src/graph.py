@@ -36,7 +36,7 @@ async def _format_docs(docs):
 async def route_retriever(state: RecommendationState):
     faculty = state["faculty"]
 
-    if faculty == "":
+    if faculty is None:
         return "retrieve_supervisors"
     return "retrieve_supervisors_by_faculty"
 
@@ -112,7 +112,7 @@ if __name__ == "__main__":
         recommendation_graph.ainvoke(
             {
                 "faculty": "Faculty of Information and Communication Technology",
-                "question": "Deep Generative AI models",
+                "question": "Recommend me supervisors for my thesis 'Deep Generative AI models'",
             }
         )
     )
