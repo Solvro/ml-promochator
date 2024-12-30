@@ -18,11 +18,11 @@ dependencies = [
     "faiss-cpu~=1.8.0.post1",
     "pydantic~=2.8.2",
     "langchain-core==0.3.21", 
-    "langserve>=0.3.0",
     "fastapi==0.112.2",
     "httpx~=0.25.2",
     "sse_starlette",
-    "langgraph~=0.2.53"
+    "langgraph~=0.2.53",
+    "slowapi~=0.1.9 ",
 ]
 
 [project.urls]

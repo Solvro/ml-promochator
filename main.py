@@ -1,21 +1,48 @@
-from fastapi import FastAPI
-from langserve import add_routes
-from langchain_core.runnables.utils import Output
+from fastapi import FastAPI, HTTPException, Body, Request
+from slowapi import Limiter
+from slowapi.util import get_remote_address
 
 from src.graph import recommendation_graph
 from src.components.models import InputRecommendationGeneration
 
+limiter = Limiter(key_func=get_remote_address)
 
 app = FastAPI(
     title="PromoCHATor",
     version="1.0",
-    description="An api for recommending supervisors for thesis",
+    description="An API for recommending supervisors for thesis",
 )
 
-add_routes(
-    app,
-    recommendation_graph.with_types(
-        input_type=InputRecommendationGeneration, output_type=Output
-    ),
-    path="/recommend",
-)
+app.state.limiter = limiter
+
+
+@app.post("/recommend/invoke")
+@limiter.limit("1/minute")
+async def invoke(
+    request: Request,
+    body: dict = Body(..., description="Input JSON"),
+):
+    try:
+        input_data = body.get("input", {})
+        if not input_data:
+            raise HTTPException(
+                status_code=422, detail="Missing 'input' field in the request body."
+            )
+
+        request_data = InputRecommendationGeneration(**input_data)
+
+        final_state = await recommendation_graph.ainvoke(
+            {
+                "faculty": request_data.faculty,
+                "question": request_data.question,
+            }
+        )
+
+        return {"output": final_state["recommendation"]}
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(
+            status_code=500, detail=f"Error invoking runnable: {str(e)}"
+        )
