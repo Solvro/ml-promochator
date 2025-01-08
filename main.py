@@ -2,11 +2,9 @@ from fastapi import FastAPI, HTTPException, Body, Request, Header
 from typing import Annotated
 from slowapi import Limiter
 from ipaddress import IPv4Address
+from src.graph import recommendation_graph
+from src.components.models import InputRecommendationGeneration
 import logging
-
-
-# from src.graph import recommendation_graph
-# from src.components.models import InputRecommendationGeneration
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
@@ -37,7 +35,7 @@ app.state.limiter = limiter
 
 
 @app.post("/recommend/invoke")
-@limiter.limit("1/10second")
+@limiter.limit("1/minute")
 async def invoke(
     request: Request,
     x_forwarded_for: Annotated[IPv4Address, Header()],
@@ -50,17 +48,16 @@ async def invoke(
                 status_code=422, detail="Missing 'input' field in the request body."
             )
 
-        # request_data = InputRecommendationGeneration(**input_data)
+        request_data = InputRecommendationGeneration(**input_data)
 
-        # final_state = await recommendation_graph.ainvoke(
-        #     {
-        #         "faculty": request_data.faculty,
-        #         "question": request_data.question,
-        #     }
-        # )
+        final_state = await recommendation_graph.ainvoke(
+            {
+                "faculty": request_data.faculty,
+                "question": request_data.question,
+            }
+        )
 
-        # return {"output": final_state["recommendation"]}
-        return {"output": "request successfull"}
+        return {"output": final_state["recommendation"]}
 
     except HTTPException:
         raise
