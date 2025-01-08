@@ -1,7 +1,6 @@
 from fastapi import FastAPI, HTTPException, Body, Request, Header
 from typing import Annotated
 from slowapi import Limiter
-from slowapi.util import get_ipaddr
 from ipaddress import IPv4Address
 import logging
 
@@ -11,7 +10,21 @@ import logging
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
-limiter = Limiter(key_func=get_ipaddr)
+
+
+def my_get_ipaddr(request: Request):
+    x_forwarded_for = request.headers.get("X-Forwarded-For")
+    if x_forwarded_for:
+        logger.info(f"Request from: {x_forwarded_for}")
+        return request.headers.get("X-Forwarded-For")
+    host = request.client.host
+    if host:
+        logger.info(f"Request from: {host}")
+        return host
+    return "127.0.0.1"
+
+
+limiter = Limiter(key_func=my_get_ipaddr)
 
 
 app = FastAPI(
@@ -30,7 +43,6 @@ async def invoke(
     x_forwarded_for: Annotated[IPv4Address, Header()],
     body: dict = Body(..., description="Input JSON"),
 ):
-    logger.info(f"Request from: {x_forwarded_for}")
     try:
         input_data = body.get("input", {})
         if not input_data:
