@@ -3,12 +3,14 @@ from typing import Annotated
 from slowapi import Limiter
 from slowapi.util import get_ipaddr
 from ipaddress import IPv4Address
+import logging
 
 
 # from src.graph import recommendation_graph
 # from src.components.models import InputRecommendationGeneration
 
-
+logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO)
 limiter = Limiter(key_func=get_ipaddr)
 
 
@@ -28,7 +30,7 @@ async def invoke(
     x_forwarded_for: Annotated[IPv4Address, Header()],
     body: dict = Body(..., description="Input JSON"),
 ):
-    print(f"Request from: {x_forwarded_for}")
+    logger.info(f"Request from: {x_forwarded_for}")
     try:
         input_data = body.get("input", {})
         if not input_data:
