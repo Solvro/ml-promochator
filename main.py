@@ -1,11 +1,16 @@
-from fastapi import FastAPI, HTTPException, Body, Request
+from fastapi import FastAPI, HTTPException, Body, Request, Header
+from typing import Annotated
 from slowapi import Limiter
-from slowapi.util import get_remote_address
+from slowapi.util import get_ipaddr
+from ipaddress import IPv4Address
+
 
 # from src.graph import recommendation_graph
 # from src.components.models import InputRecommendationGeneration
 
-limiter = Limiter(key_func=get_remote_address)
+
+limiter = Limiter(key_func=get_ipaddr)
+
 
 app = FastAPI(
     title="PromoCHATor",
@@ -17,12 +22,13 @@ app.state.limiter = limiter
 
 
 @app.post("/recommend/invoke")
-@limiter.limit("1/5second")
+@limiter.limit("1/10second")
 async def invoke(
     request: Request,
+    x_forwarded_for: Annotated[IPv4Address, Header()],
     body: dict = Body(..., description="Input JSON"),
 ):
-    print(f"request.client = {request.client}")
+    print(f"Request from: {x_forwarded_for}")
     try:
         input_data = body.get("input", {})
         if not input_data:
