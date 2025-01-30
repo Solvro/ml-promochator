@@ -35,7 +35,7 @@ app.state.limiter = limiter
 
 
 @app.post("/recommend/invoke")
-@limiter.limit("1/minute")
+# @limiter.limit("1/minute")
 async def invoke(
     request: Request,
     x_forwarded_for: Annotated[IPv4Address, Header()],
