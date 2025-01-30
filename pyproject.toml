@@ -23,6 +23,9 @@ dependencies = [
     "sse_starlette",
     "langgraph~=0.2.53",
     "slowapi~=0.1.9 ",
+    "sqlmodel~=0.0.22",
+    "alembic~=1.14.1",
+    "psycopg2-binary~=2.9.9",
 ]
 
 [project.urls]
