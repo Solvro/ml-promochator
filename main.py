@@ -15,9 +15,9 @@ def my_get_ipaddr(request: Request):
     x = "x-forwarded-for".encode("utf-8")
     for header in request.headers.raw:
         if header[0] == x:
-            print("Find out the forwarded-for ip address")
+            logger.info("Find out the forwarded-for ip address")
             origin_ip = re.split(", ", header[1].decode("utf-8"))
-            print(f"origin_ip:\t{origin_ip}")
+            logger.info(f"origin_ip:\t{origin_ip}")
             # print(f"forward_ip:\t{forward_ip}")
             return origin_ip
     # x_forwarded_for = request.headers.get("X-Forwarded-For")
