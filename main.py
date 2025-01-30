@@ -4,7 +4,7 @@ from slowapi import Limiter
 from ipaddress import IPv4Address
 from src.graph import recommendation_graph
 from src.components.models import InputRecommendationGeneration
-from src.database.schemas.feedback import Feedback
+from src.database.schemas.feedback import Feedback, FeedbackCreate
 from src.database.db import SessionDep
 import logging
 
@@ -70,7 +70,7 @@ async def invoke(
 
 
 @app.post("/recommend/feedback", status_code=201)
-async def feedback(feedback: Feedback, session: SessionDep):
-    session.add(feedback)
+async def feedback(feedback: FeedbackCreate, session: SessionDep):
+    feedback_db = Feedback(**feedback.model_dump())
+    session.add(feedback_db)
     session.commit()
-    return
