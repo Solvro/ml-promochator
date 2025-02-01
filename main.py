@@ -13,11 +13,12 @@ logging.basicConfig(level=logging.INFO)
 def my_get_ipaddr(request: Request):
     x_forwarded_for = request.headers.get("X-Forwarded-For")
     if x_forwarded_for:
-        logger.info(f"Request from: {x_forwarded_for}")
+        logger.info(f"X-Forwarded-For header: ${x_forwarded_for}")
+        logger.info(f"Request from based on X-Forwarded-For header: {x_forwarded_for}")
         return request.headers.get("X-Forwarded-For")
     host = request.client.host
     if host:
-        logger.info(f"Request from: {host}")
+        logger.info(f"Request from based on Host header: {host}")
         return host
     return "127.0.0.1"
 
