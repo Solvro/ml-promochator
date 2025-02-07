@@ -1,21 +1,18 @@
-import os
-
 from dotenv import load_dotenv
-
 load_dotenv()
 
+import os
 import logging
 import uuid
-
 from ipaddress import IPv4Address
 from typing import Annotated
-
-from fastapi import Body, FastAPI, Header, HTTPException, Request
+from fastapi import Body, FastAPI, Header, HTTPException, Request, Response
 from slowapi import Limiter
 from starlette.middleware.sessions import SessionMiddleware
-
 from src.components.models import InputRecommendationGeneration
 from src.graph import run_graph, clear_memory
+from src.database.schemas.feedback import Feedback, FeedbackCreate
+from src.database.db import SessionDep
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
@@ -52,7 +49,7 @@ app.state.limiter = limiter
 
 
 @app.post('/recommend/invoke')
-@limiter.limit("1/minute")
+# @limiter.limit("1/minute")
 async def invoke(
         request: Request,
         x_forwarded_for: Annotated[IPv4Address, Header()] = None,
@@ -82,11 +79,8 @@ async def invoke(
         raise HTTPException(status_code=500, detail=f'Error invoking runnable: {str(e)}')
 
 
-from fastapi import Response
-
-
 # Endpoint to clear session cookie and memory for it
-@app.post("/clear-session")
+@app.post("/recommend/clear-session")
 async def clear_session(response: Response, request: Request):
     detail = ''
 
@@ -99,6 +93,13 @@ async def clear_session(response: Response, request: Request):
     detail += ' Session cookie cleared.'
 
     return {"detail": detail}
+
+
+@app.post("/recommend/feedback", status_code=201)
+async def feedback(feedback: FeedbackCreate, session: SessionDep):
+    feedback_db = Feedback(**feedback.model_dump())
+    session.add(feedback_db)
+    session.commit()
 
 
 if __name__ == '__main__':
