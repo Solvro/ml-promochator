@@ -42,7 +42,7 @@ class RecommendedSupervisor(BaseModel):
 
 
 class Recommendation(BaseModel):
-    hello_message: str = Field(..., title='Hello message')
+    hello_message: str = Field(..., title='Hello message or any other output besides recommended supervisors')
     recommended_supervisors: list[RecommendedSupervisor] = Field(
         default_factory=list, title='Recommended supervisors fo user thesis'
     )

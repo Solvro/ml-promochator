@@ -1,13 +1,21 @@
+import os
+
+from dotenv import load_dotenv
+
+load_dotenv()
+
 import logging
+import uuid
 
 from ipaddress import IPv4Address
 from typing import Annotated
 
 from fastapi import Body, FastAPI, Header, HTTPException, Request
 from slowapi import Limiter
+from starlette.middleware.sessions import SessionMiddleware
 
 from src.components.models import InputRecommendationGeneration
-from src.graph import recommendation_graph
+from src.graph import run_graph, clear_memory
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
@@ -27,43 +35,70 @@ def my_get_ipaddr(request: Request):
 
 limiter = Limiter(key_func=my_get_ipaddr)
 
-
 app = FastAPI(
     title='PromoCHATor',
     version='1.0',
     description='An API for recommending supervisors for thesis',
 )
 
+# Add Session Middleware with a secret key. This middleware manages a session cookie.
+app.add_middleware(
+    SessionMiddleware,
+    secret_key=os.getenv('SESSION_SECRET_KEY'),  # any string can be key
+    max_age=3600  # in seconds
+)
+
 app.state.limiter = limiter
 
 
 @app.post('/recommend/invoke')
-# @limiter.limit("1/minute")
+@limiter.limit("1/minute")
 async def invoke(
-    request: Request,
-    x_forwarded_for: Annotated[IPv4Address, Header()],
-    body: dict = Body(..., description='Input JSON'),
+        request: Request,
+        x_forwarded_for: Annotated[IPv4Address, Header()] = None,
+        body: dict = Body(..., description='Input JSON'),
 ):
     try:
+        # Retrieve or create the thread_id for this session
+        session = request.session
+        if "thread_id" not in session:
+            session["thread_id"] = str(uuid.uuid4())
+
         input_data = body.get('input', {})
         if not input_data:
             raise HTTPException(status_code=422, detail="Missing 'input' field in the request body.")
 
         request_data = InputRecommendationGeneration(**input_data)
 
-        final_state = await recommendation_graph.ainvoke(
-            {
-                'faculty': request_data.faculty,
-                'question': request_data.question,
-            }
-        )
+        result = await run_graph(request_data, session["thread_id"])
 
-        return {'output': final_state['recommendation']}
+        return {'output': result}
 
     except HTTPException:
+        print("HTTPException occurred")
         raise
     except Exception as e:
+        print(e)
         raise HTTPException(status_code=500, detail=f'Error invoking runnable: {str(e)}')
+
+
+from fastapi import Response
+
+
+# Endpoint to clear session cookie and memory for it
+@app.post("/clear-session")
+async def clear_session(response: Response, request: Request):
+    detail = ''
+
+    session = request.session
+    if "thread_id" in session:
+        await clear_memory(session["thread_id"])
+        detail += f'Memory cleared for {session["thread_id"]}.'
+
+    response.delete_cookie("session")
+    detail += ' Session cookie cleared.'
+
+    return {"detail": detail}
 
 
 if __name__ == '__main__':

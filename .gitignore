@@ -3,7 +3,7 @@ __pycache__/
 *.pyc
 *.pyo
 
-.idea
+.idea/
 
 # Ignore virtual environment directory
 venv/
