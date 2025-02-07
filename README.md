@@ -5,7 +5,7 @@
 </p>
 
 # Solvro ML - PromoCHATor
-<p align="justify"> 
+<p align="justify">
 W tym repozytorium znajduje się kod systemu rekomendacyjnego opartego na dużych modelach językowych. System w postaci chatbota, na podstawie dorobku naukowego pracowników Politechniki Wrocławskiej, dopasowywuje odpowiedniego promotora do podanego przez studenta tematu pracy dyplomowej
 </p>
 
@@ -23,7 +23,7 @@ W tym repozytorium znajduje się kod systemu rekomendacyjnego opartego na dużyc
 4. **[Current team](#current-team)**
 
 ## Description
-<p align="justify"> 
+<p align="justify">
 This repository contains code of recommendation system, which is based on large language models. System should match supervisor for thesis title or description given by user
 </p>
 
