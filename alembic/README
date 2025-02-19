@@ -1,0 +1,2 @@
+Currently database contains only one table for feedback data.
+If you're not familiar with alembic, please check out how it works - https://alembic.sqlalchemy.org/en/latest/tutorial.html
