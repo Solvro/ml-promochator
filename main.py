@@ -1,5 +1,4 @@
 from dotenv import load_dotenv
-load_dotenv()
 
 import os
 import logging
@@ -10,12 +9,18 @@ from fastapi import Body, FastAPI, Header, HTTPException, Request, Response
 from slowapi import Limiter
 from starlette.middleware.sessions import SessionMiddleware
 from src.components.models import InputRecommendationGeneration
-from src.graph import run_graph, clear_memory
-from src.database.schemas.feedback import Feedback, FeedbackCreate
-from src.database.db import SessionDep
+from src.graph import get_graph
+from src.components.graph.utils import clear_memory, run_graph
+
+# from src.database.schemas.feedback import Feedback, FeedbackCreate
+# from src.database.db import SessionDep
+
+load_dotenv()
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
+
+graph = get_graph()
 
 
 def my_get_ipaddr(request: Request):
@@ -67,7 +72,7 @@ async def invoke(
 
         request_data = InputRecommendationGeneration(**input_data)
 
-        result = await run_graph(request_data, session["thread_id"])
+        result = await run_graph(graph, request_data, session["thread_id"])
 
         return {'output': result}
 
@@ -86,7 +91,7 @@ async def clear_session(response: Response, request: Request):
 
     session = request.session
     if "thread_id" in session:
-        await clear_memory(session["thread_id"])
+        await clear_memory(graph, session["thread_id"])
         detail += f'Memory cleared for {session["thread_id"]}.'
 
     response.delete_cookie("session")
@@ -95,11 +100,11 @@ async def clear_session(response: Response, request: Request):
     return {"detail": detail}
 
 
-@app.post("/recommend/feedback", status_code=201)
-async def feedback(feedback: FeedbackCreate, session: SessionDep):
-    feedback_db = Feedback(**feedback.model_dump())
-    session.add(feedback_db)
-    session.commit()
+# @app.post("/recommend/feedback", status_code=201)
+# async def feedback(feedback: FeedbackCreate, session: SessionDep):
+#     feedback_db = Feedback(**feedback.model_dump())
+#     session.add(feedback_db)
+#     session.commit()
 
 
 if __name__ == '__main__':
