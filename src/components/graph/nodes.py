@@ -1,5 +1,4 @@
 from src.components.graph.state import RecommendationState
-from dotenv import load_dotenv
 
 from langchain_core.messages import AIMessage
 from langgraph.graph import END
@@ -11,8 +10,6 @@ from src.components.graph.utils import format_prompt, format_docs
 from src.components.constants import VECTORSTORE_PATH
 from src.components.database import get_vectorstore
 from src.components.embeddings import openai_embeddings
-
-load_dotenv()
 
 vectorstore = get_vectorstore(VECTORSTORE_PATH, openai_embeddings)
 
