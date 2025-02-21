@@ -6,7 +6,6 @@ from sqlmodel import SQLModel
 from alembic import context
 
 import os
-import dotenv
 
 from src.database.schemas.feedback import Feedback
 
@@ -29,8 +28,6 @@ target_metadata = SQLModel.metadata
 # can be acquired:
 # my_important_option = config.get_main_option("my_important_option")
 # ... etc.
-
-dotenv.load_dotenv()
 
 postgres_url = f"postgresql://{os.getenv('DB_USERNAME')}:{os.getenv('DB_PASSWORD')}@{os.getenv('DB_HOST')}:{os.getenv('DB_PORT')}/{os.getenv('DB_DATABASE')}"
 
