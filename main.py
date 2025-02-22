@@ -1,4 +1,5 @@
 from dotenv import load_dotenv
+load_dotenv()
 
 import os
 import logging
@@ -15,7 +16,7 @@ from src.components.graph.utils import clear_memory, run_graph
 # from src.database.schemas.feedback import Feedback, FeedbackCreate
 # from src.database.db import SessionDep
 
-load_dotenv()
+
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
