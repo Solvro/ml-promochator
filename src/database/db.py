@@ -1,7 +1,8 @@
-from typing import Annotated
-from fastapi import Depends
-from sqlmodel import create_engine, Session
 import os
+from typing import Annotated
+
+from fastapi import Depends
+from sqlmodel import Session, create_engine
 
 postgres_url = f"postgresql://{os.getenv('DB_USERNAME')}:{os.getenv('DB_PASSWORD')}@{os.getenv('DB_HOST')}:{os.getenv('DB_PORT')}/{os.getenv('DB_DATABASE')}"
 

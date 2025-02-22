@@ -1,15 +1,13 @@
-from src.components.graph.state import RecommendationState
-
 from langchain_core.messages import AIMessage
 from langgraph.graph import END
-
-from src.components.llms import chat_llm, chat_llm_with_structured
-from src.components.prompts import route_to_retriever_placeholder
-from src.components.graph.utils import format_prompt, format_docs
 
 from src.components.constants import VECTORSTORE_PATH
 from src.components.database import get_vectorstore
 from src.components.embeddings import openai_embeddings
+from src.components.graph.state import RecommendationState
+from src.components.graph.utils import format_docs, format_prompt
+from src.components.llms import chat_llm, chat_llm_with_structured
+from src.components.prompts import route_to_retriever_placeholder
 
 vectorstore = get_vectorstore(VECTORSTORE_PATH, openai_embeddings)
 
@@ -27,11 +25,9 @@ async def chatbot(state: RecommendationState):
             route_to_retriever_placeholder, ''
         )  # removing placeholder from response
 
-        return {**state, 'retrieving_query': response, 'should_retrieve': True,
-                'recommendation': None}
+        return {**state, 'retrieving_query': response, 'should_retrieve': True, 'recommendation': None}
     else:
-        return {**state, 'messages': [response], 'should_retrieve': False,
-                'recommendation': None}
+        return {**state, 'messages': [response], 'should_retrieve': False, 'recommendation': None}
 
 
 # Decides whether to retrieve docs, or proceed to END
@@ -65,8 +61,12 @@ async def fill_template(state: RecommendationState):
         retrieved_docs = state['retrieved_docs']
         retrieved_context = await format_docs(retrieved_docs)
 
-    prompt = format_prompt(query=query, retrieved_context=retrieved_context, history=state['messages'][:-1],
-                           faculty=state.get('faculty', ''))
+    prompt = format_prompt(
+        query=query,
+        retrieved_context=retrieved_context,
+        history=state['messages'][:-1],
+        faculty=state.get('faculty', ''),
+    )
 
     return {**state, 'prompt': prompt}
 

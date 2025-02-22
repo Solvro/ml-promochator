@@ -1,5 +1,6 @@
 from langchain_core.runnables import ConfigurableField
 from langchain_openai import ChatOpenAI, OpenAI
+
 from src.components.models import Recommendation
 
 llm_openai = OpenAI(temperature=0.2)

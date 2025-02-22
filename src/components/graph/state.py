@@ -1,4 +1,4 @@
-from typing import TypedDict, Annotated
+from typing import Annotated, TypedDict
 
 from langchain_core.documents import Document
 from langchain_core.messages import BaseMessage

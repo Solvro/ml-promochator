@@ -1,16 +1,13 @@
 from dotenv import load_dotenv
-
-load_dotenv()  # loading .env here too for case when project is launching from graph.py
-
 from langgraph.checkpoint.memory import MemorySaver
 from langgraph.graph import END, START, StateGraph
 
+from src.components.graph.nodes import chatbot, fill_template, final_answer, retrieve_supervisors, route_retriever
+from src.components.graph.state import RecommendationState
 from src.components.graph.utils import run_graph
 from src.components.models import InputRecommendationGeneration
-from src.components.graph.state import RecommendationState
-from src.components.graph.nodes import chatbot, retrieve_supervisors, final_answer, fill_template, route_retriever
 
-
+load_dotenv()  # loading .env here too for case when project is launching from graph.py
 
 
 def get_graph():
@@ -25,10 +22,7 @@ def get_graph():
     workflow.add_conditional_edges(
         'chatbot',
         route_retriever,
-        {
-            'retrieve_supervisors': 'retrieve_supervisors',
-            END: END
-        },
+        {'retrieve_supervisors': 'retrieve_supervisors', END: END},
     )
     workflow.add_edge('retrieve_supervisors', 'fill_template')
     workflow.add_edge('fill_template', 'final_answer')
@@ -51,8 +45,9 @@ if __name__ == '__main__':
 
     while True:
         query = input('You: ')
-        request_data = InputRecommendationGeneration(question=query,
-                                                     faculty="Faculty of Information and Communication Technology")
+        request_data = InputRecommendationGeneration(
+            question=query, faculty='Faculty of Information and Communication Technology'
+        )
 
         result = asyncio.run(run_graph(graph, request_data, thread_id))
 
