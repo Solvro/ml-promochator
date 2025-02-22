@@ -1,4 +1,3 @@
-from dotenv import load_dotenv
 from langgraph.checkpoint.memory import MemorySaver
 from langgraph.graph import END, START, StateGraph
 
@@ -6,8 +5,6 @@ from src.components.graph.nodes import chatbot, fill_template, final_answer, ret
 from src.components.graph.state import RecommendationState
 from src.components.graph.utils import run_graph
 from src.components.models import InputRecommendationGeneration
-
-load_dotenv()  # loading .env here too for case when project is launching from graph.py
 
 
 def get_graph():

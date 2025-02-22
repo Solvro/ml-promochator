@@ -4,7 +4,6 @@ import uuid
 from ipaddress import IPv4Address
 from typing import Annotated
 
-from dotenv import load_dotenv
 from fastapi import Body, FastAPI, Header, HTTPException, Request, Response
 from slowapi import Limiter
 from starlette.middleware.sessions import SessionMiddleware
@@ -15,8 +14,6 @@ from src.graph import get_graph
 
 # from src.database.schemas.feedback import Feedback, FeedbackCreate
 # from src.database.db import SessionDep
-
-load_dotenv()
 
 
 logger = logging.getLogger(__name__)
