@@ -1,21 +1,19 @@
-from dotenv import load_dotenv
-load_dotenv()
-
-import os
 import logging
+import os
 import uuid
 from ipaddress import IPv4Address
 from typing import Annotated
+
 from fastapi import Body, FastAPI, Header, HTTPException, Request, Response
 from slowapi import Limiter
 from starlette.middleware.sessions import SessionMiddleware
+
+from src.components.graph.utils import clear_memory, run_graph
 from src.components.models import InputRecommendationGeneration
 from src.graph import get_graph
-from src.components.graph.utils import clear_memory, run_graph
 
 # from src.database.schemas.feedback import Feedback, FeedbackCreate
 # from src.database.db import SessionDep
-
 
 
 logger = logging.getLogger(__name__)
@@ -48,7 +46,7 @@ app = FastAPI(
 app.add_middleware(
     SessionMiddleware,
     secret_key=os.getenv('SESSION_SECRET_KEY'),  # any string can be key
-    max_age=3600  # in seconds
+    max_age=3600,  # in seconds
 )
 
 app.state.limiter = limiter
@@ -57,15 +55,15 @@ app.state.limiter = limiter
 @app.post('/recommend/invoke')
 # @limiter.limit("1/minute")
 async def invoke(
-        request: Request,
-        x_forwarded_for: Annotated[IPv4Address, Header()] = None,
-        body: dict = Body(..., description='Input JSON'),
+    request: Request,
+    x_forwarded_for: Annotated[IPv4Address, Header()] = None,
+    body: dict = Body(..., description='Input JSON'),
 ):
     try:
         # Retrieve or create the thread_id for this session
         session = request.session
-        if "thread_id" not in session:
-            session["thread_id"] = str(uuid.uuid4())
+        if 'thread_id' not in session:
+            session['thread_id'] = str(uuid.uuid4())
 
         input_data = body.get('input', {})
         if not input_data:
@@ -73,32 +71,30 @@ async def invoke(
 
         request_data = InputRecommendationGeneration(**input_data)
 
-        result = await run_graph(graph, request_data, session["thread_id"])
+        result = await run_graph(graph, request_data, session['thread_id'])
 
         return {'output': result}
 
     except HTTPException:
-        print("HTTPException occurred")
         raise
     except Exception as e:
-        print(e)
-        raise HTTPException(status_code=500, detail=f'Error invoking runnable: {str(e)}')
+        raise HTTPException(status_code=500, detail=f'Error invoking runnable: {str(e)}') from e
 
 
 # Endpoint to clear session cookie and memory for it
-@app.post("/recommend/clear-session")
+@app.post('/recommend/clear-session')
 async def clear_session(response: Response, request: Request):
     detail = ''
 
     session = request.session
-    if "thread_id" in session:
-        await clear_memory(graph, session["thread_id"])
+    if 'thread_id' in session:
+        await clear_memory(graph, session['thread_id'])
         detail += f'Memory cleared for {session["thread_id"]}.'
 
-    response.delete_cookie("session")
+    response.delete_cookie('session')
     detail += ' Session cookie cleared.'
 
-    return {"detail": detail}
+    return {'detail': detail}
 
 
 # @app.post("/recommend/feedback", status_code=201)

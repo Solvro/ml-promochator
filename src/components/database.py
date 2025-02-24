@@ -1,10 +1,8 @@
 import os
 import time
-
 from uuid import uuid4
 
 import faiss
-
 from langchain_community.docstore.in_memory import InMemoryDocstore
 from langchain_community.vectorstores import FAISS
 

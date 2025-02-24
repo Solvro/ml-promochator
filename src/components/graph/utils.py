@@ -1,10 +1,14 @@
-from langgraph.graph.state import CompiledStateGraph
 from langchain_core.messages import BaseMessage, RemoveMessage
-from langchain_core.prompts import ChatPromptTemplate, SystemMessagePromptTemplate, HumanMessagePromptTemplate
+from langchain_core.prompts import ChatPromptTemplate, HumanMessagePromptTemplate, SystemMessagePromptTemplate
+from langgraph.graph.state import CompiledStateGraph
 
 from src.components.models import InputRecommendationGeneration, Recommendation
-from src.components.prompts import GENERAL_PROMPT_TEMPLATE, SYSTEM_PROMPT, RETRIEVAL_INSTRUCTION_PROMPT, \
-    OUTPUT_FORMAT_PROMPT
+from src.components.prompts import (
+    GENERAL_PROMPT_TEMPLATE,
+    OUTPUT_FORMAT_PROMPT,
+    RETRIEVAL_INSTRUCTION_PROMPT,
+    SYSTEM_PROMPT,
+)
 
 
 async def format_docs(docs):
@@ -26,16 +30,16 @@ def format_prompt(query, history=None, retrieved_context='', faculty=''):
     # Common templates
     human_template = HumanMessagePromptTemplate.from_template(
         GENERAL_PROMPT_TEMPLATE,
-        input_variables=["retrieved_context", "query", "faculty"],
+        input_variables=['retrieved_context', 'query', 'faculty'],
     )
 
     # Base message structure
     messages = []
 
     if retrieved_context.strip():  # if retrieved smth - command to format accordingly
-        messages.append(SystemMessagePromptTemplate.from_template(SYSTEM_PROMPT + "\n" + OUTPUT_FORMAT_PROMPT))
+        messages.append(SystemMessagePromptTemplate.from_template(SYSTEM_PROMPT + '\n' + OUTPUT_FORMAT_PROMPT))
     else:  # if it is the start of the graph(did not retrieved anything) - provide instructions on retrieval
-        messages.append(SystemMessagePromptTemplate.from_template(SYSTEM_PROMPT + "\n" + RETRIEVAL_INSTRUCTION_PROMPT))
+        messages.append(SystemMessagePromptTemplate.from_template(SYSTEM_PROMPT + '\n' + RETRIEVAL_INSTRUCTION_PROMPT))
 
     # Add history and human template
     messages.extend(history)
@@ -53,11 +57,11 @@ async def clear_memory(graph: CompiledStateGraph, thread_id: str) -> None:
     config = {'configurable': {'thread_id': thread_id}}
 
     try:
-        messages = graph.get_state(config).values["messages"]
+        messages = graph.get_state(config).values['messages']
 
         for message in messages:
-            await graph.aupdate_state(config, {"messages": RemoveMessage(id=message.id)})
-    except Exception as e:
+            await graph.aupdate_state(config, {'messages': RemoveMessage(id=message.id)})
+    except Exception:
         pass  # exception is thrown if memory is empty - "messages" key doesn't exist
 
 
@@ -65,10 +69,7 @@ async def run_graph(graph: CompiledStateGraph, input_model: InputRecommendationG
     config = {'configurable': {'thread_id': thread_id}}
 
     final_state = await graph.ainvoke(
-        {
-            "faculty": input_model.faculty,
-            "messages": input_model.question
-        },
+        {'faculty': input_model.faculty, 'messages': input_model.question},
         config=config,
     )
 
