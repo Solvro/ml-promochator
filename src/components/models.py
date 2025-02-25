@@ -3,6 +3,9 @@ from typing import Optional
 
 
 class Paper(BaseModel):
+    """
+    Represents a research paper related to the user's thesis.
+    """
     title: str = Field(..., title="Title of the paper related to user's thesis")
     description: str = Field(
         default="", title="Short description (2-3 sentences) of the paper"
@@ -10,10 +13,19 @@ class Paper(BaseModel):
 
     @property
     def as_str(self) -> str:
+        """
+        Returns a formatted string representation of the paper.
+
+        Returns:
+            str (str): Formatted string representatation
+        """
         return f"### {self.title}\n\n{self.description}".strip()
 
 
 class Thesis(BaseModel):
+    """
+    Represents a former thesis related to the user's topic.
+    """
     title: str = Field(..., title="Title of former thesis related to user's thesis")
     description: str = Field(
         default="", title="Short description (2-3 sentences) of the thesis"
@@ -21,10 +33,20 @@ class Thesis(BaseModel):
 
     @property
     def as_str(self) -> str:
+        """
+        Returns a formatted string representation of the thesis.
+
+        Returns:
+            str (str): Formatted string representatation
+        """
+        
         return f"### {self.title}\n\n{self.description}".strip()
 
 
 class RecommendedSupervisor(BaseModel):
+    """
+    Represents a recommended supervisor along with relevant papers and theses.
+    """
     name: str = Field(..., title="Name of the recommended Supervisor")
     faculty: str = Field(..., title="Faculty of the recommended Supervisor")
     papers: list[Paper] = Field(
@@ -38,6 +60,12 @@ class RecommendedSupervisor(BaseModel):
 
     @property
     def as_str(self) -> str:
+        """
+        Returns a formatted string representation of the recommended supervisor.
+
+        Returns:
+            str (str): Formatted string representatation
+        """
         papers = "\n\n".join(
             f"### {paper.title}\n\n{paper.description}" for paper in self.papers or []
         )
@@ -50,6 +78,9 @@ class RecommendedSupervisor(BaseModel):
 
 
 class Recommendation(BaseModel):
+    """
+    Represents a complete recommendation including a greeting message and a list of recommended supervisors.
+    """
     hello_message: str = Field(..., title="Hello message")
     recommended_supervisors: list[RecommendedSupervisor] = Field(
         default_factory=list, title="Recommended supervisors fo user thesis"
@@ -57,6 +88,12 @@ class Recommendation(BaseModel):
 
     @property
     def as_str(self) -> str:
+        """
+        Returns a formatted string representation of the recommendation.
+        
+        Returns:
+            str (str): Formatted string representatation
+        """
         supervisors = "\n\n".join(
             supervisor.as_str for supervisor in self.recommended_supervisors
         )
@@ -64,6 +101,9 @@ class Recommendation(BaseModel):
 
 
 class InputRecommendationGeneration(BaseModel):
+    """
+    Represents the input structure for generating a supervisor recommendation.
+    """
     question: str = Field(..., title="Question anout supervisor for a thesis")
     faculty: Optional[str] = Field(None, title="Faculty of supervisor for the thesis")
 

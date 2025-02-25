@@ -8,6 +8,18 @@ from src.components.loaders import load_csv
 
 
 def get_vectorstore(vectorstore_path, embeddings):
+    """
+    Loads or creates a FAISS-based vector store for document retrieval.
+    
+    If a vector store exists at the given path, it loads the stored index. Otherwise, it creates
+    a new FAISS index, processes supervisor data from a CSV file, and adds them to the database.
+    
+    Parameters:
+        vectorstore_path: Path to the stored FAISS database.
+        embeddings: Embedding model used to generate vector representations of documents.
+    Returns:
+        db: A FAISS vector store instance.
+    """
     if os.path.exists(vectorstore_path):
         db = FAISS.load_local(
             vectorstore_path, embeddings, allow_dangerous_deserialization=True
@@ -27,7 +39,7 @@ def get_vectorstore(vectorstore_path, embeddings):
         batch_size = 600
         total_batches = (len(documents) + batch_size - 1) // batch_size
 
-        # vectorize data in batches because of openai token limit TPM (token per minute)
+        # Vectorize data in batches because of openai token limit TPM (token per minute)
         for batch_idx in range(total_batches):
             start_idx = batch_idx * batch_size
             end_idx = min(start_idx + batch_size, len(documents))

@@ -1,8 +1,6 @@
 from langchain_openai import OpenAI, ChatOpenAI
 from langchain_core.runnables import ConfigurableField
-
 from src.components.models import Recommendation
-
 from dotenv import load_dotenv
 
 

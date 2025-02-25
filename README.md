@@ -160,3 +160,4 @@ This is our current team
 - [@Woleek](https://github.com/Woleek) - ML Engineer
 - [@WiktoriaFrost](https://github.com/WiktoriaFrost) - ML Engineer
 - [@Barionetta](https://github.com/Barionetta) - Project Manager
+- [@rychu777](https://github.com/rychu777) - ML Engineer
