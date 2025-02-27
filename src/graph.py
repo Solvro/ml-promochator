@@ -145,33 +145,37 @@ async def recommend(state: RecommendationState):
 
     return {**state, "recommendation": recommendation}
 
-# Define the workflow graph
-workflow = StateGraph(RecommendationState)
+def create_recommendation_workflow() -> StateGraph:
+    """
+    Creates and returns the recommendation workflow graph.
 
-# Add retrieval nodes
-workflow.add_node("retrieve_supervisors", retrieve_supervisors)
-workflow.add_node("retrieve_supervisors_by_faculty", retrieve_supervisors_by_faculty)
+    Returns:
+        StateGraph: The compiled recommendation workflow graph.
+    """
+    workflow = StateGraph(RecommendationState)
 
-# Add processing nodes
-workflow.add_node("fill_template", fill_template)
-workflow.add_node("recommend", recommend)
+    workflow.add_node("retrieve_supervisors", retrieve_supervisors)
+    workflow.add_node("retrieve_supervisors_by_faculty", retrieve_supervisors_by_faculty)
 
-# Define workflow transitions
-workflow.add_conditional_edges(
-    START,
-    route_retriever,
-    {
-        "retrieve_supervisors": "retrieve_supervisors",
-        "retrieve_supervisors_by_faculty": "retrieve_supervisors_by_faculty",
-    },
-)
-workflow.add_edge("retrieve_supervisors", "fill_template")
-workflow.add_edge("retrieve_supervisors_by_faculty", "fill_template")
-workflow.add_edge("fill_template", "recommend")
-workflow.add_edge("recommend", END)
+    workflow.add_node("fill_template", fill_template)
+    workflow.add_node("recommend", recommend)
 
-# Compile the workflow
-recommendation_graph = workflow.compile()
+    workflow.add_conditional_edges(
+        START,
+        route_retriever,
+        {
+            "retrieve_supervisors": "retrieve_supervisors",
+            "retrieve_supervisors_by_faculty": "retrieve_supervisors_by_faculty",
+        },
+    )
+    workflow.add_edge("retrieve_supervisors", "fill_template")
+    workflow.add_edge("retrieve_supervisors_by_faculty", "fill_template")
+    workflow.add_edge("fill_template", "recommend")
+    workflow.add_edge("recommend", END)
+
+    return workflow.compile()
+
+recommendation_graph = create_recommendation_workflow()
 
 
 if __name__ == "__main__":

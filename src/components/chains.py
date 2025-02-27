@@ -5,6 +5,7 @@ from src.components.embeddings import openai_embeddings
 from src.components.prompts import PROMPT_TEMPLATE, SYSTEM_PROMPT
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.runnables import RunnablePassthrough
+from langchain_core.documents import Document
 
 
 template = ChatPromptTemplate(
@@ -14,13 +15,11 @@ template = ChatPromptTemplate(
     ]
 )
 
-
 vectorstore = get_vectorstore(VECTORSTORE_PATH, openai_embeddings)
 
 retriever = vectorstore.as_retriever(search_kwargs={"k": 8})
 
-
-def _format_docs(docs):
+def _format_docs(docs: list[Document]) -> str:
     """
     Formats documents by joining their content into a single string.
 
@@ -30,7 +29,6 @@ def _format_docs(docs):
         str (str): Concatenated text of documents separated by three new lines
     """
     return "\n\n\n".join([d.page_content for d in docs])
-
 
 qa_chain = (
     {"retrieved_context": retriever | _format_docs, "question": RunnablePassthrough()}

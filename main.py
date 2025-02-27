@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
 
 
-def my_get_ipaddr(request: Request):
+def get_ip_address(request: Request):
     """
     Extracts the client's IP address from the request headers.
 
@@ -38,7 +38,7 @@ def my_get_ipaddr(request: Request):
     return "127.0.0.1" # Default fallback IP
 
 
-limiter = Limiter(key_func=my_get_ipaddr)
+limiter = Limiter(key_func=get_ip_address)
 
 app = FastAPI(
     title="PromoCHATor",
@@ -66,7 +66,7 @@ async def invoke(
         body (dict): The request payload containing the input data.
 
     Returns:
-        RecommendationState: Final state containing the recommended supervisors.
+        RecommendationState: Final state containing the model's response.
 
     Raises:
         HTTPException: If the input data is missing or if an internal server error occurs.

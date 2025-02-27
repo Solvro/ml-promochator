@@ -2,7 +2,7 @@ import csv
 from langchain_core.documents import Document
 
 
-def load_csv(file_path):
+def load_csv(file_path: str) -> list[Document]:
     """
     Loads supervisor data from a CSV file and converts each row into a Document object.
 
