@@ -1,13 +1,26 @@
 import os
 import time
 from uuid import uuid4
+from typing import Any
 from langchain_community.docstore.in_memory import InMemoryDocstore
 from langchain_community.vectorstores import FAISS
 import faiss
 from src.components.loaders import load_csv
 
 
-def get_vectorstore(vectorstore_path, embeddings):
+def get_vectorstore(vectorstore_path: str, embeddings: Any) -> FAISS:
+    """
+    Loads or creates a vector store for document retrieval.
+    
+    If a vector store exists at the given path, it loads the stored index. Otherwise, it creates
+    a new index, processes supervisor data from a CSV file, and adds them to the database.
+    
+    Parameters:
+        vectorstore_path (str): Path to the stored database.
+        embeddings (Any): Embedding model used to generate vector representations of documents.
+    Returns:
+        db (FAISS): A vector store instance.
+    """
     if os.path.exists(vectorstore_path):
         db = FAISS.load_local(
             vectorstore_path, embeddings, allow_dangerous_deserialization=True
@@ -27,7 +40,7 @@ def get_vectorstore(vectorstore_path, embeddings):
         batch_size = 600
         total_batches = (len(documents) + batch_size - 1) // batch_size
 
-        # vectorize data in batches because of openai token limit TPM (token per minute)
+        # Vectorize data in batches because of openai token limit TPM (token per minute)
         for batch_idx in range(total_batches):
             start_idx = batch_idx * batch_size
             end_idx = min(start_idx + batch_size, len(documents))
