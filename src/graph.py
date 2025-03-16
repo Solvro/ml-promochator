@@ -7,7 +7,14 @@ from src.components.graph.utils import run_graph
 from src.components.models import InputRecommendationGeneration
 
 
-def get_graph():
+
+def create_recommendation_workflow():
+    """
+    Creates and returns the recommendation workflow graph.
+
+    Returns:
+        StateGraph: The compiled recommendation workflow graph.
+    """
     workflow = StateGraph(RecommendationState)
 
     workflow.add_node('chatbot', chatbot)
@@ -37,7 +44,7 @@ def get_graph():
 if __name__ == '__main__':
     import asyncio
 
-    graph = get_graph()
+    graph = create_recommendation_workflow()
     thread_id = '1'
 
     while True:

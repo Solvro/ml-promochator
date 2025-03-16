@@ -165,3 +165,4 @@ This is our current team
 - [@WiktoriaFrost](https://github.com/WiktoriaFrost) - ML Engineer
 - [@avtorgenii](https://github.com/avtorgenii) - ML Engineer
 - [@Barionetta](https://github.com/Barionetta) - Project Manager
+- [@rychu777](https://github.com/rychu777) - ML Engineer

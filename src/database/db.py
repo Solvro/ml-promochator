@@ -10,6 +10,15 @@ engine = create_engine(postgres_url)
 
 
 def get_session():
+    """
+    Dependency function that provides a database session.
+
+    This function creates a new session using the SQLModel engine and yields it.
+    The session is automatically closed when the request is completed.
+
+    Yields:
+        Session: A database session.
+    """
     with Session(engine) as session:
         yield session
 

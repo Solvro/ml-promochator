@@ -32,6 +32,15 @@ async def chatbot(state: RecommendationState):
 
 # Decides whether to retrieve docs, or proceed to END
 async def route_retriever(state: RecommendationState):
+    """
+    Determines which retrieval function to use based on faculty presence.
+
+    Parameters:
+        state (RecommendationState): The current workflow state.
+
+    Returns:
+        str (str): The next step in the workflow ("retrieve_supervisors" or "retrieve_supervisors_by_faculty").
+    """
     should_retrieve = state['should_retrieve']
     if should_retrieve:
         return 'retrieve_supervisors'
@@ -40,6 +49,15 @@ async def route_retriever(state: RecommendationState):
 
 
 async def retrieve_supervisors(state: RecommendationState):
+    """
+    Retrieves supervisors relevant to the given research question from the vector database.
+
+    Parameters:
+        state (RecommendationState): The current workflow state.
+
+    Returns:
+        RecommendationState: Updated state with retrieved supervisor documents.
+    """
     faculty = state.get('faculty', None)
     question = state['messages'][-1].content
 
@@ -53,6 +71,15 @@ async def retrieve_supervisors(state: RecommendationState):
 
 
 async def fill_template(state: RecommendationState):
+    """
+    Formats the retrieved supervisor data into a structured AI prompt.
+
+    Parameters:
+        state (RecommendationState): The current workflow state.
+
+    Returns:
+        RecommendationState: Updated state with a formatted AI prompt.
+    """
     query = state['messages'][-1]
 
     retrieved_context = ''
@@ -72,6 +99,15 @@ async def fill_template(state: RecommendationState):
 
 
 async def final_answer(state: RecommendationState):
+    """
+    Generates a thesis supervisor recommendation using the AI model.
+
+    Parameters:
+        state (RecommendationState): The current workflow state.
+
+    Returns:
+        RecommendationState: Updated state with the AI-generated recommendation.
+    """
     prompt = state['prompt']
     response = await chat_llm_with_structured.ainvoke(prompt)
 
