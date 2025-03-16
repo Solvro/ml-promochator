@@ -10,14 +10,14 @@ from langchain_core.documents import Document
 
 template = ChatPromptTemplate(
     [
-        ("system", SYSTEM_PROMPT),
-        ("human", PROMPT_TEMPLATE),
+        ('system', SYSTEM_PROMPT),
+        ('human', PROMPT_TEMPLATE),
     ]
 )
 
 vectorstore = get_vectorstore(VECTORSTORE_PATH, openai_embeddings)
 
-retriever = vectorstore.as_retriever(search_kwargs={"k": 8})
+retriever = vectorstore.as_retriever(search_kwargs={'k': 8})
 
 def _format_docs(docs: list[Document]) -> str:
     """
@@ -37,7 +37,7 @@ qa_chain = (
 )
 
 
-if __name__ == "__main__":
-    recom = qa_chain.invoke("Deep Generative Models")
+if __name__ == '__main__':
+    recom = qa_chain.invoke('Deep Generative Models')
     print(recom)
     print(recom.as_str)

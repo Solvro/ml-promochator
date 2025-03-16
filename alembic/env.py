@@ -1,14 +1,10 @@
+import os
 from logging.config import fileConfig
 
 from sqlalchemy import create_engine
 from sqlmodel import SQLModel
 
 from alembic import context
-
-import os
-import dotenv
-
-from src.database.schemas.feedback import Feedback
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -30,9 +26,7 @@ target_metadata = SQLModel.metadata
 # my_important_option = config.get_main_option("my_important_option")
 # ... etc.
 
-dotenv.load_dotenv()
-
-postgres_url = f"postgresql://{os.getenv('DB_USERNAME')}:{os.getenv('DB_PASSWORD')}@{os.getenv('DB_HOST')}:{os.getenv('DB_PORT')}/{os.getenv('DB_DATABASE')}"
+postgres_url = f'postgresql://{os.getenv("DB_USERNAME")}:{os.getenv("DB_PASSWORD")}@{os.getenv("DB_HOST")}:{os.getenv("DB_PORT")}/{os.getenv("DB_DATABASE")}'
 
 
 def run_migrations_offline() -> None:
@@ -52,7 +46,7 @@ def run_migrations_offline() -> None:
         url=postgres_url,
         target_metadata=target_metadata,
         literal_binds=True,
-        dialect_opts={"paramstyle": "named"},
+        dialect_opts={'paramstyle': 'named'},
     )
 
     with context.begin_transaction():

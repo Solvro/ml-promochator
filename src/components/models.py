@@ -1,5 +1,6 @@
-from pydantic import BaseModel, Field
 from typing import Optional
+
+from pydantic import BaseModel, Field
 
 
 class Paper(BaseModel):
@@ -7,9 +8,7 @@ class Paper(BaseModel):
     Object representing a research paper related to the user's thesis.
     """
     title: str = Field(..., title="Title of the paper related to user's thesis")
-    description: str = Field(
-        default="", title="Short description (2-3 sentences) of the paper"
-    )
+    description: str = Field(default='', title='Short description (2-3 sentences) of the paper')
 
     @property
     def as_str(self) -> str:
@@ -24,9 +23,7 @@ class Thesis(BaseModel):
     Object representing a former thesis related to the user's topic.
     """
     title: str = Field(..., title="Title of former thesis related to user's thesis")
-    description: str = Field(
-        default="", title="Short description (2-3 sentences) of the thesis"
-    )
+    description: str = Field(default='', title='Short description (2-3 sentences) of the thesis')
 
     @property
     def as_str(self) -> str:
@@ -65,7 +62,7 @@ class RecommendedSupervisor(BaseModel):
             for thesis in self.theses or []
         )
 
-        return f"## {self.name}, {self.faculty}\n\n{papers}\n\n{theses}".strip()
+        return f'## {self.name}, {self.faculty}\n\n{papers}\n\n{theses}'.strip()
 
 
 class Recommendation(BaseModel):
@@ -74,7 +71,7 @@ class Recommendation(BaseModel):
     """
     hello_message: str = Field(..., title="Hello message")
     recommended_supervisors: list[RecommendedSupervisor] = Field(
-        default_factory=list, title="Recommended supervisors fo user thesis"
+        default_factory=list, title='Recommended supervisors fo user thesis'
     )
 
     @property
@@ -96,13 +93,11 @@ class InputRecommendationGeneration(BaseModel):
     faculty: Optional[str] = Field(None, title="Faculty of supervisor for the thesis")
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     from src.components.llms import chat_llm
     from src.components.prompts import PROMPT_TEMPLATE
 
     recommender = chat_llm.with_structured_output(Recommendation)
-    recom = recommender.invoke(
-        PROMPT_TEMPLATE.format(question="Deep Generative Models")
-    )
+    recom = recommender.invoke(PROMPT_TEMPLATE.format(question='Deep Generative Models'))
     print(recom)
     print(recom.as_str)

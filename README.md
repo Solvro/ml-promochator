@@ -5,7 +5,7 @@
 </p>
 
 # Solvro ML - PromoCHATor
-<p align="justify"> 
+<p align="justify">
 W tym repozytorium znajduje się kod systemu rekomendacyjnego opartego na dużych modelach językowych. System w postaci chatbota, na podstawie dorobku naukowego pracowników Politechniki Wrocławskiej, dopasowywuje odpowiedniego promotora do podanego przez studenta tematu pracy dyplomowej
 </p>
 
@@ -23,19 +23,19 @@ W tym repozytorium znajduje się kod systemu rekomendacyjnego opartego na dużyc
 4. **[Current team](#current-team)**
 
 ## Description
-<p align="justify"> 
 This repository contains code of recommendation system, which is based on large language models. System should match supervisor for thesis title or description given by user
-</p>
 
 ## Technologies
 Project uses following languages and technologies
 * Python 3
 * LangChain
+* LangGraph
+* FastAPI
 * WebUI
 
 ## Development
 ### Quick start
-If you want to setup project locally
+If you want to set up project locally
 
 1. Create new virtual environment:
 
@@ -70,28 +70,32 @@ If you want to setup project locally
    pre-commit install
    ```
 
-6. create `.env` file and paste your OpenAI API Key
+6. create `.env` file and fill it according to template below
 
    ```
-   OPEN_AI_API_KEY = "<yourkey>"
+   OPENAI_API_KEY="<yourkey>"
+   SESSION_SECRET_KEY="<random_string>"
+   DB_USERNAME=
+   DB_PASSWORD=
+   DB_HOST=
+   DB_PORT=
+   DB_DATABASE=
    ```
+
+7. Download the `final_data_and_vectorstore.zip` archive from the [promochator dataset](https://drive.google.com/drive/folders/1odcaykO5uGtJXGugjCm8UioFT2XWWHNM). Unpack archive and place both folders `data` and `vectorstores` within project directory.
 
 After these steps project scripts are ready to launch
 
 
 ### Launching
-1. scrape_scholarly.py
 
+1. To launch in console
    ```
-   python scripts/scrape_scholarly.py
+   python src/graph.py
    ```
-
-Before running recomend.py, please ensure that you have downloaded the authors_with_papers.csv file from the [promochator dataset](https://drive.google.com/drive/folders/1odcaykO5uGtJXGugjCm8UioFT2XWWHNM). Place the file in the data folder within your project directory.
-
-2. recomend.py
-
+2. To launch web server
    ```
-   python scripts/recomend.py --question="your's question"
+   python main.py
    ```
 
 ### Docker
@@ -113,7 +117,7 @@ Then run
    ```
    curl -X POST "http://localhost:8000/recommend/invoke" \
    -H "Content-Type: application/json" \
-   -d '{"input": "Deep Generative Models"}'
+   -d '{"input": {"question": "Deep Generative Models", "faculty": "Faculty of Information and Communication Technology"}}'
    ```
 
 response:
@@ -124,7 +128,7 @@ response:
 
 ### Data managment
 
-Dataset should be kept in `data` folder. If you want to access solvro dataset, you could try to contact project manager or techlead
+Dataset should be kept in `data` and `vectorstores` folder. If you want to access solvro dataset, you could try to contact project manager or techlead
 
 > [!WARNING]
 > Please do not push dataset to remote repository
@@ -159,5 +163,6 @@ This is our current team
 - [@b4rt4s](https://github.com/b4rt4s) - ML Engineer
 - [@Woleek](https://github.com/Woleek) - ML Engineer
 - [@WiktoriaFrost](https://github.com/WiktoriaFrost) - ML Engineer
+- [@avtorgenii](https://github.com/avtorgenii) - ML Engineer
 - [@Barionetta](https://github.com/Barionetta) - Project Manager
 - [@rychu777](https://github.com/rychu777) - ML Engineer
