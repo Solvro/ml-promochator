@@ -117,7 +117,7 @@ Then run
    ```
    curl -X POST "http://localhost:8000/recommend/invoke" \
    -H "Content-Type: application/json" \
-   -d '{"question": "Deep Generative Models", "faculty": "Faculty of Information and Communication Technology"}'
+   -d '{"input": {"question": "Deep Generative Models", "faculty": "Faculty of Information and Communication Technology"}}'
    ```
 
 response:
