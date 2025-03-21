@@ -6,7 +6,7 @@ from sqlmodel import Field, SQLModel
 
 class Supervisor(SQLModel, table=True):
     id: int = Field(primary_key=True)
-    name: str = Field(unique=True)
+    name: str
     faculty: str | None = None
     created_at: datetime = Field(
         default_factory=datetime.now,

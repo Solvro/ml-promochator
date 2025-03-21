@@ -139,6 +139,8 @@ async def feedback(feedback: FeedbackCreate, session: SessionDep):
         session (SessionDep): The database session dependency for database operations.
     """
     supervisor = feedback.supervisor
+
+    # Assumption that there are no 2 supervisors with the same name on the same faculty xd
     stmt = select(Supervisor).where((Supervisor.name == supervisor.name) & (Supervisor.faculty == supervisor.faculty))
     supervisor_from_db = session.exec(stmt).first()
     if supervisor_from_db is None:

@@ -23,10 +23,11 @@ def upgrade() -> None:
     op.create_table(
         'supervisor',
         sa.Column('id', sa.Integer(), nullable=False, autoincrement=True),
-        sa.Column('name', sa.String(), unique=True, nullable=False),
+        sa.Column('name', sa.String(), nullable=False),
         sa.Column('faculty', sa.String(), nullable=False),
         sa.Column('created_at', sa.DateTime(), nullable=False),
         sa.PrimaryKeyConstraint('id'),
+        sa.UniqueConstraint('name', 'faculty'),
     )
 
 
