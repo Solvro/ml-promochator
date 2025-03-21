@@ -1,4 +1,4 @@
-"""Add a feedback column
+"""Create a feedback table
 
 Revision ID: 74c9a5ac6c6a
 Revises: b3150ecd712f

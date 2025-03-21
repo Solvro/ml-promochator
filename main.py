@@ -139,14 +139,14 @@ async def feedback(feedback: FeedbackCreate, session: SessionDep):
         session (SessionDep): The database session dependency for database operations.
     """
     supervisor = feedback.supervisor
-    stmt = select(Supervisor).where(Supervisor.name == supervisor.name and Supervisor.faculty == supervisor.faculty)
+    stmt = select(Supervisor).where((Supervisor.name == supervisor.name) & (Supervisor.faculty == supervisor.faculty))
     supervisor_from_db = session.exec(stmt).first()
     if supervisor_from_db is None:
         supervisor_from_db = Supervisor(**supervisor.model_dump())
         session.add(supervisor_from_db)
         session.commit()
 
-    feedback_db = Feedback(**feedback.model_dump(), supervisor_id=supervisor_from_db.id)
+    feedback_db = Feedback(**feedback.model_dump(exclude={'supervisor'}), supervisor_id=supervisor_from_db.id)
     session.add(feedback_db)
     session.commit()
 

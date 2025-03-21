@@ -87,7 +87,7 @@ class InputRecommendationGeneration(BaseModel):
     Object representing the input structure for generating a supervisor recommendation.
     """
 
-    question: str = Field(..., title='Question anout supervisor for a thesis')
+    question: str = Field(..., title='Question about supervisor for a thesis')
     faculty: Optional[str] = Field(None, title='Faculty of supervisor for the thesis')
 
 
