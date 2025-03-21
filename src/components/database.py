@@ -1,9 +1,9 @@
 import os
 import time
+from typing import Any
 from uuid import uuid4
 
 import faiss
-from typing import Any
 from langchain_community.docstore.in_memory import InMemoryDocstore
 from langchain_community.vectorstores import FAISS
 
@@ -13,10 +13,10 @@ from src.components.loaders import load_csv
 def get_vectorstore(vectorstore_path: str, embeddings: Any) -> FAISS:
     """
     Loads or creates a vector store for document retrieval.
-    
+
     If a vector store exists at the given path, it loads the stored index. Otherwise, it creates
     a new index, processes supervisor data from a CSV file, and adds them to the database.
-    
+
     Parameters:
         vectorstore_path (str): Path to the stored database.
         embeddings (Any): Embedding model used to generate vector representations of documents.
