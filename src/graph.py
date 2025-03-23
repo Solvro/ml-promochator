@@ -7,7 +7,6 @@ from src.components.graph.utils import run_graph
 from src.components.models import InputRecommendationGeneration
 
 
-
 def create_recommendation_workflow():
     """
     Creates and returns the recommendation workflow graph.

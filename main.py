@@ -6,15 +6,15 @@ from typing import Annotated
 
 from fastapi import Body, FastAPI, Header, HTTPException, Request, Response
 from slowapi import Limiter
+from sqlmodel import select
 from starlette.middleware.sessions import SessionMiddleware
 
 from src.components.graph.utils import clear_memory, run_graph
 from src.components.models import InputRecommendationGeneration
-from src.graph import create_recommendation_workflow
-
-from src.database.schemas.feedback import Feedback, FeedbackCreate
 from src.database.db import SessionDep
-
+from src.database.schemas.feedback import Feedback, FeedbackCreate
+from src.database.schemas.supervisor import Supervisor
+from src.graph import create_recommendation_workflow
 
 # Configure logging
 logger = logging.getLogger(__name__)
@@ -36,7 +36,7 @@ def get_ip_address(request: Request):
     Returns:
         str (str): The client's IP address.
     """
-    x_forwarded_for = request.headers.get("X-Forwarded-For")
+    x_forwarded_for = request.headers.get('X-Forwarded-For')
     if x_forwarded_for:
         logger.info(f'Request from: {x_forwarded_for}')
         return request.headers.get('X-Forwarded-For')
@@ -44,7 +44,7 @@ def get_ip_address(request: Request):
     if host:
         logger.info(f'Request from: {host}')
         return host
-    return "127.0.0.1" # Default fallback IP
+    return '127.0.0.1'  # Default fallback IP
 
 
 limiter = Limiter(key_func=get_ip_address)
@@ -64,7 +64,8 @@ app.add_middleware(
 
 app.state.limiter = limiter
 
-@app.post("/recommend/invoke")
+
+@app.post('/recommend/invoke')
 async def invoke(
     request: Request,
     x_forwarded_for: Annotated[IPv4Address, Header()] = None,
@@ -73,7 +74,7 @@ async def invoke(
     """
     Endpoint to invoke the recommendation engine.
 
-    This endpoint takes in a user's question about finding a suitable supervisor for their thesis 
+    This endpoint takes in a user's question about finding a suitable supervisor for their thesis
     and processes the request using a recommendation system.
 
     Parameters:
@@ -125,7 +126,7 @@ async def clear_session(response: Response, request: Request):
     return {'detail': detail}
 
 
-@app.post("/recommend/feedback", status_code=201)
+@app.post('/recommend/feedback', status_code=201)
 async def feedback(feedback: FeedbackCreate, session: SessionDep):
     """
     Endpoint to submit feedback on a recommendation.
@@ -137,7 +138,17 @@ async def feedback(feedback: FeedbackCreate, session: SessionDep):
         feedback (FeedbackCreate): The feedback data submitted by the user.
         session (SessionDep): The database session dependency for database operations.
     """
-    feedback_db = Feedback(**feedback.model_dump())
+    supervisor = feedback.supervisor
+
+    # Assumption that there are no 2 supervisors with the same name on the same faculty xd
+    stmt = select(Supervisor).where((Supervisor.name == supervisor.name) & (Supervisor.faculty == supervisor.faculty))
+    supervisor_from_db = session.exec(stmt).first()
+    if supervisor_from_db is None:
+        supervisor_from_db = Supervisor(**supervisor.model_dump())
+        session.add(supervisor_from_db)
+        session.commit()
+
+    feedback_db = Feedback(**feedback.model_dump(exclude={'supervisor'}), supervisor_id=supervisor_from_db.id)
     session.add(feedback_db)
     session.commit()
 
