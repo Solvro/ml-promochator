@@ -12,7 +12,22 @@ from src.components.prompts import route_to_retriever_placeholder
 vectorstore = get_vectorstore(VECTORSTORE_PATH, openai_embeddings)
 
 
-async def chatbot(state: RecommendationState):
+async def chatbot(state: RecommendationState) -> RecommendationState:
+    """
+    Generates a chatbot response based on the current conversation state.
+
+    Constructs a prompt using the latest user message and previous chat history,
+    invokes the LLM to get a response, and determines whether the response 
+    indicates the need to perform document retrieval.
+
+    Parameters:
+        state (RecommendationState): The current state containing chat messages 
+        and workflow data.
+
+    Returns:
+        RecommendationState: Updated state with the new message and retrieval flags.
+    """
+        
     prompt = format_prompt(
         query=state['messages'][-1], history=state['messages'][:-1]
     )  # Appending whole chat history to the prompt
