@@ -40,7 +40,7 @@ async def chatbot(state: RecommendationState) -> RecommendationState:
             route_to_retriever_placeholder, ''
         )  # removing placeholder from response
 
-        return {**state, 'retrieving_query': response, 'should_retrieve': True, 'recommendation': None}
+        return {**state, 'retrieving_query': response.content, 'should_retrieve': True, 'recommendation': None}
     else:
         return {**state, 'messages': [response], 'should_retrieve': False, 'recommendation': None}
 
@@ -77,7 +77,7 @@ async def retrieve_supervisors(state: RecommendationState):
     question = state['messages'][-1].content
 
     retrieved_docs = await vectorstore.amax_marginal_relevance_search(
-        query=question,
+        query=state['retrieving_query'],
         k=8,
         filter={'faculty': faculty} if state['faculty'] is not None else {},
     )
