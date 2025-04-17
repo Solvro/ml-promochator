@@ -12,7 +12,22 @@ from src.components.prompts import route_to_retriever_placeholder
 vectorstore = get_vectorstore(VECTORSTORE_PATH, openai_embeddings)
 
 
-async def chatbot(state: RecommendationState):
+async def chatbot(state: RecommendationState) -> RecommendationState:
+    """
+    Generates a chatbot response based on the current conversation state.
+
+    Constructs a prompt using the latest user message and previous chat history,
+    invokes the LLM to get a response, and determines whether the response 
+    indicates the need to perform document retrieval.
+
+    Parameters:
+        state (RecommendationState): The current state containing chat messages 
+        and workflow data.
+
+    Returns:
+        RecommendationState: Updated state with the new message and retrieval flags.
+    """
+        
     prompt = format_prompt(
         query=state['messages'][-1], history=state['messages'][:-1]
     )  # Appending whole chat history to the prompt
@@ -25,7 +40,7 @@ async def chatbot(state: RecommendationState):
             route_to_retriever_placeholder, ''
         )  # removing placeholder from response
 
-        return {**state, 'retrieving_query': response, 'should_retrieve': True, 'recommendation': None}
+        return {**state, 'retrieving_query': response.content, 'should_retrieve': True, 'recommendation': None}
     else:
         return {**state, 'messages': [response], 'should_retrieve': False, 'recommendation': None}
 
@@ -62,7 +77,7 @@ async def retrieve_supervisors(state: RecommendationState):
     question = state['messages'][-1].content
 
     retrieved_docs = await vectorstore.amax_marginal_relevance_search(
-        query=question,
+        query=state['retrieving_query'],
         k=8,
         filter={'faculty': faculty} if state['faculty'] is not None else {},
     )

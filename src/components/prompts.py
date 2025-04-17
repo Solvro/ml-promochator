@@ -21,6 +21,7 @@ clear, helpful responses.
 """
 
 RETRIEVAL_INSTRUCTION_PROMPT = f"""
+0. If the user's query is in Polish, first translate it into English before extracting keywords.
 1. If user wants to find thesis supervisors or asks about specific supervisors:
    - Extract key keywords from their query (thesis topic + related terms)
    - Format your output as comma-separated values ending with {route_to_retriever_placeholder},

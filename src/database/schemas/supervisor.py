@@ -5,6 +5,16 @@ from sqlmodel import Field, SQLModel
 
 
 class Supervisor(SQLModel, table=True):
+    """
+    Represents a supervisor entity stored in the database.
+
+    Attributes:
+        id (int): Primary key, unique identifier of the supervisor.
+        name (str): Full name of the supervisor.
+        faculty (Optional[str]): Faculty the supervisor is associated with.
+        created_at (datetime): Timestamp of creation.
+    """
+
     id: int = Field(primary_key=True)
     name: str
     faculty: str | None = None
@@ -14,5 +24,12 @@ class Supervisor(SQLModel, table=True):
 
 
 class SupervisorCreate(BaseModel):
+    """
+    Input model for creating a new supervisor.
+
+    Attributes:
+        name (str): Full name of the supervisor.
+        faculty (Optional[str]): Faculty the supervisor is associated with.
+    """
     name: str
     faculty: str
